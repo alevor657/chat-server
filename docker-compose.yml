@@ -1,0 +1,49 @@
+version: "3"
+services:
+    node_latest:
+        container_name: node_latest
+        build:
+            context: .
+            dockerfile: docker/Dockerfile-node-latest
+        volumes:
+            - ./:/app/
+            - /app/node_modules
+
+        environment:
+          - DBWEBB_PORT=8090
+        ports:
+            - "8090:8090"
+        command:
+            "npm start"
+
+    node8:
+        container_name: node8
+        build:
+            context: .
+            dockerfile: docker/Dockerfile-node-8-alpine
+        volumes:
+            - ./:/app/
+            - /app/node_modules
+
+        environment:
+          - DBWEBB_PORT=8088
+
+        ports:
+            - "8088:8088"
+        command: "npm start"
+
+    node6:
+        container_name: node6
+        build:
+            context: .
+            dockerfile: docker/Dockerfile-node-6-alpine
+        volumes:
+            - ./:/app/
+            - /app/node_modules
+
+        environment:
+          - DBWEBB_PORT=8086
+
+        ports:
+            - "8086:8086"
+        command: "npm start"
