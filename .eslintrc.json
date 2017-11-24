@@ -10,7 +10,7 @@
         "node": true,
         "jest": true
     },
-    "extends": ["eslint:recommended", "plugin:react/recommended", "plugin:jest/recommended"],
+    "extends": ["eslint:recommended", "plugin:jest/recommended"],
     "parserOptions": {
         "ecmaFeatures": {
             "experimentalObjectRestSpread": true,
@@ -19,7 +19,6 @@
         "sourceType": "module"
     },
     "plugins": [
-        "react",
         "jest"
     ],
     "rules": {

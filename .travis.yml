@@ -1,5 +1,8 @@
 language: node_js
 
+env:
+  - MONGO_TEST_DB=1
+
 node_js:
   - "6"
   - "7"

@@ -4,7 +4,12 @@ import morgan from 'morgan';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 
-mongoose.connect('mongodb://localhost/chatAPI');
+if (process.env.MONGO_TEST_DB) {
+    mongoose.connect('mongodb://tester:tester@80.78.218.152:27017/chatAPI');
+} else {
+    mongoose.connect('mongodb://localhost/chatAPI');
+}
+
 mongoose.Promise = global.Promise;
 const db = mongoose.connection;
 

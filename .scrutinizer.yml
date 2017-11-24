@@ -1,8 +1,11 @@
 build:
+    environment:
+        variables:
+            MONGO_TEST_DB: '1'
     tests:
         override:
             -
-                command: 'npm run jest'
+                command: 'npm run test'
                 coverage:
                     file: 'coverage/clover.xml'
                     format: 'clover'
@@ -15,3 +18,8 @@ filter:
         - "dist"
         - "docker"
         - "node_modules"
+
+checks:
+    javascript:
+        code_rating: true
+        duplicate_code: true

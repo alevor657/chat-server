@@ -1,14 +1,15 @@
 import User from '../models/User';
 
 export const signUp = async (req, res) => {
-    const user = new User(req);
-    const foundUser = await user.getUser();
+    const user = new User();
+    const fields = req.value.body;
+    const foundUser = await user.getUser(fields);
 
     if (foundUser) {
         return res.status(403).json({'error': "Email or username is alredy in use"});
     }
 
-    const token = await user.registerUser();
+    const token = await user.registerUser(fields);
 
     res.status(201).json({
         token

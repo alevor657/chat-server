@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1511501681080" clover="3.2.0">
-  <project timestamp="1511501681080" name="All files">
-    <metrics statements="90" coveredstatements="82" conditionals="14" coveredconditionals="9" methods="16" coveredmethods="16" elements="120" coveredelements="107" complexity="0" loc="90" ncloc="90" packages="7" files="8" classes="8">
+<coverage generated="1511514693082" clover="3.2.0">
+  <project timestamp="1511514693083" name="All files">
+    <metrics statements="88" coveredstatements="80" conditionals="14" coveredconditionals="9" methods="15" coveredmethods="15" elements="117" coveredelements="104" complexity="0" loc="88" ncloc="88" packages="7" files="8" classes="8">
       <package name="src">
         <metrics statements="11" coveredstatements="11" conditionals="2" coveredconditionals="2" methods="1" coveredmethods="1"/>
         <file name="index.js" path="/home/yooo/dbwebb-kurser/ramverk2/me/app/server/src/index.js">
@@ -23,13 +23,13 @@
         <metrics statements="24" coveredstatements="19" conditionals="6" coveredconditionals="3" methods="2" coveredmethods="2"/>
         <file name="constants.js" path="/home/yooo/dbwebb-kurser/ramverk2/me/app/server/src/api/constants.js">
           <metrics statements="7" coveredstatements="7" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
-          <line num="1" count="1" type="stmt"/>
-          <line num="2" count="1" type="stmt"/>
-          <line num="4" count="1" type="stmt"/>
-          <line num="5" count="1" type="stmt"/>
-          <line num="7" count="1" type="stmt"/>
-          <line num="8" count="1" type="stmt"/>
-          <line num="10" count="1" type="stmt"/>
+          <line num="1" count="2" type="stmt"/>
+          <line num="2" count="2" type="stmt"/>
+          <line num="4" count="2" type="stmt"/>
+          <line num="5" count="2" type="stmt"/>
+          <line num="7" count="2" type="stmt"/>
+          <line num="8" count="2" type="stmt"/>
+          <line num="10" count="2" type="stmt"/>
         </file>
         <file name="passport.js" path="/home/yooo/dbwebb-kurser/ramverk2/me/app/server/src/api/passport.js">
           <metrics statements="17" coveredstatements="12" conditionals="6" coveredconditionals="3" methods="2" coveredmethods="2"/>
@@ -53,59 +53,57 @@
         </file>
       </package>
       <package name="src.api.controllers">
-        <metrics statements="15" coveredstatements="15" conditionals="2" coveredconditionals="2" methods="4" coveredmethods="4"/>
+        <metrics statements="16" coveredstatements="16" conditionals="2" coveredconditionals="2" methods="4" coveredmethods="4"/>
         <file name="user.js" path="/home/yooo/dbwebb-kurser/ramverk2/me/app/server/src/api/controllers/user.js">
-          <metrics statements="15" coveredstatements="15" conditionals="2" coveredconditionals="2" methods="4" coveredmethods="4"/>
+          <metrics statements="16" coveredstatements="16" conditionals="2" coveredconditionals="2" methods="4" coveredmethods="4"/>
           <line num="3" count="1" type="stmt"/>
           <line num="4" count="2" type="stmt"/>
           <line num="5" count="2" type="stmt"/>
-          <line num="7" count="2" type="cond" truecount="2" falsecount="0"/>
-          <line num="8" count="1" type="stmt"/>
-          <line num="11" count="1" type="stmt"/>
-          <line num="13" count="1" type="stmt"/>
-          <line num="18" count="1" type="stmt"/>
+          <line num="6" count="2" type="stmt"/>
+          <line num="8" count="2" type="cond" truecount="2" falsecount="0"/>
+          <line num="9" count="1" type="stmt"/>
+          <line num="12" count="1" type="stmt"/>
+          <line num="14" count="1" type="stmt"/>
           <line num="19" count="1" type="stmt"/>
-          <line num="21" count="1" type="stmt"/>
-          <line num="26" count="1" type="stmt"/>
+          <line num="20" count="1" type="stmt"/>
+          <line num="22" count="1" type="stmt"/>
           <line num="27" count="1" type="stmt"/>
-          <line num="30" count="1" type="stmt"/>
+          <line num="28" count="1" type="stmt"/>
           <line num="31" count="1" type="stmt"/>
           <line num="32" count="1" type="stmt"/>
+          <line num="33" count="1" type="stmt"/>
         </file>
       </package>
       <package name="src.api.db.models">
         <metrics statements="13" coveredstatements="11" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="2"/>
         <file name="user.js" path="/home/yooo/dbwebb-kurser/ramverk2/me/app/server/src/api/db/models/user.js">
           <metrics statements="13" coveredstatements="11" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="2"/>
-          <line num="3" count="1" type="stmt"/>
-          <line num="5" count="1" type="stmt"/>
-          <line num="25" count="1" type="stmt"/>
+          <line num="3" count="2" type="stmt"/>
+          <line num="5" count="2" type="stmt"/>
+          <line num="25" count="2" type="stmt"/>
           <line num="26" count="1" type="stmt"/>
           <line num="27" count="1" type="stmt"/>
           <line num="28" count="1" type="stmt"/>
           <line num="30" count="1" type="stmt"/>
           <line num="31" count="1" type="stmt"/>
           <line num="33" count="0" type="stmt"/>
-          <line num="37" count="1" type="stmt"/>
+          <line num="37" count="2" type="stmt"/>
           <line num="38" count="1" type="stmt"/>
           <line num="39" count="1" type="stmt"/>
           <line num="41" count="0" type="stmt"/>
         </file>
       </package>
       <package name="src.api.models">
-        <metrics statements="10" coveredstatements="10" conditionals="0" coveredconditionals="0" methods="5" coveredmethods="5"/>
+        <metrics statements="7" coveredstatements="7" conditionals="0" coveredconditionals="0" methods="4" coveredmethods="4"/>
         <file name="User.js" path="/home/yooo/dbwebb-kurser/ramverk2/me/app/server/src/api/models/User.js">
-          <metrics statements="10" coveredstatements="10" conditionals="0" coveredconditionals="0" methods="5" coveredmethods="5"/>
-          <line num="10" count="3" type="stmt"/>
-          <line num="12" count="3" type="stmt"/>
-          <line num="13" count="3" type="stmt"/>
-          <line num="14" count="3" type="stmt"/>
-          <line num="22" count="2" type="stmt"/>
-          <line num="33" count="1" type="stmt"/>
-          <line num="39" count="1" type="stmt"/>
-          <line num="40" count="1" type="stmt"/>
-          <line num="49" count="2" type="stmt"/>
-          <line num="59" count="1" type="stmt"/>
+          <metrics statements="7" coveredstatements="7" conditionals="0" coveredconditionals="0" methods="4" coveredmethods="4"/>
+          <line num="11" count="2" type="stmt"/>
+          <line num="13" count="2" type="stmt"/>
+          <line num="21" count="1" type="stmt"/>
+          <line num="23" count="1" type="stmt"/>
+          <line num="24" count="1" type="stmt"/>
+          <line num="33" count="2" type="stmt"/>
+          <line num="43" count="1" type="stmt"/>
         </file>
       </package>
       <package name="src.api.routes">
