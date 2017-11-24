@@ -1,3 +1,4 @@
+import 'babel-polyfill';
 import express from 'express';
 import user from './api/routes/user';
 import morgan from 'morgan';
@@ -16,7 +17,7 @@ const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 
 const app = express();
-const port = process.env.PORT || 8099;
+const port = process.env.DBWEBB_PORT || 8099;
 
 // Middleware
 app.use(morgan('dev'));

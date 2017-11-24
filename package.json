@@ -9,7 +9,13 @@
         "start": "node dist/server.js",
         "test": "npm run eslint && npm run jest",
         "eslint": "eslint .",
-        "jest": "jest --coverage --forceExit"
+        "jest": "jest --coverage --forceExit",
+        "node_latest": "docker-compose up node_latest",
+        "node_6": "docker-compose up node6",
+        "node_8": "docker-compose up node8",
+        "test_latest": "docker-compose run node_latest npm test",
+        "test_6": "docker-compose run node6 npm test",
+        "test_8": "docker-compose run node8 npm test"
     },
     "repository": {
         "type": "git",
@@ -26,6 +32,7 @@
         "babel-eslint": "^7.2.3",
         "babel-jest": "^21.2.0",
         "babel-loader": "^7.1.2",
+        "babel-polyfill": "^6.26.0",
         "babel-preset-env": "^1.6.1",
         "babel-preset-es2015": "^6.24.1",
         "eslint": "^4.10.0",

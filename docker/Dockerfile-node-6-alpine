@@ -1,5 +1,6 @@
 # Use a base image
 FROM node:6-alpine
+ENV MONGO_TEST_DB=1
 
 # Create a workdir
 RUN mkdir -p /app

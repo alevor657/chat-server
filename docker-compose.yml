@@ -1,7 +1,7 @@
 version: "3"
 services:
     node_latest:
-        container_name: node_latest
+        container_name: chatapi_node_latest
         build:
             context: .
             dockerfile: docker/Dockerfile-node-latest
@@ -17,7 +17,7 @@ services:
             "npm start"
 
     node8:
-        container_name: node8
+        container_name: chatapi_node8
         build:
             context: .
             dockerfile: docker/Dockerfile-node-8-alpine
@@ -33,7 +33,7 @@ services:
         command: "npm start"
 
     node6:
-        container_name: node6
+        container_name: chatapi_node6
         build:
             context: .
             dockerfile: docker/Dockerfile-node-6-alpine
