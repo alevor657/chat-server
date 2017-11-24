@@ -3,7 +3,7 @@ import { Strategy } from 'passport-jwt';
 import { ExtractJwt } from 'passport-jwt';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { JWT_SECRET } from './constants';
-import User from './models/user';
+import User from './db/models/user';
 
 passport.use(new Strategy({
     jwtFromRequest: ExtractJwt.fromHeader('authorization'),
@@ -11,8 +11,6 @@ passport.use(new Strategy({
 }, async (payload, done) => {
     try {
         const user = await User.findById(payload.sub);
-
-        console.log(user);
 
         if (!user) {
             return done(null, false);

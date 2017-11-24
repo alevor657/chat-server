@@ -1,30 +1,14 @@
-import JWT from 'jsonwebtoken';
-import User from '../models/user';
-import { JWT_SECRET } from '../constants';
-
-let signToken = user => {
-    return JWT.sign({
-        iss: 'Chatapp',
-        sub: user.id,
-        iat: new Date().getTime(), // current time
-        exp: new Date().setDate(new Date().getDate() + 1) // current time + 1 day ahead
-    }, JWT_SECRET);
-};
+import User from '../models/User';
 
 export const signUp = async (req, res) => {
-    const {email, password, username} = req.value.body;
-
-    const foundUser = await User.findOne({email, username});
+    const user = new User(req);
+    const foundUser = await user.getUser();
 
     if (foundUser) {
         return res.status(403).json({'error': "Email or username is alredy in use"});
     }
 
-    const newUser = new User({email, username, password});
-
-    await newUser.save();
-
-    const token = signToken(newUser);
+    const token = await user.registerUser();
 
     res.status(201).json({
         token
@@ -32,7 +16,7 @@ export const signUp = async (req, res) => {
 };
 
 export const signIn = async (req, res) => {
-    const token = signToken(req.user);
+    const token = await User.signToken(req.user);
 
     res.status(202).json({
         token
@@ -40,11 +24,10 @@ export const signIn = async (req, res) => {
 };
 
 export const profile = async (req, res) => {
-    console.log('profile page!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
     res.json('profile');
 };
 
 export const deleteUsers = async (req, res) => {
-    await User.remove({});
+    await User.dropAll();
     res.json('dropped all users');
 };

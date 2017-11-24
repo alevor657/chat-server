@@ -5,6 +5,10 @@ import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 
 mongoose.connect('mongodb://localhost/chatAPI');
+mongoose.Promise = global.Promise;
+const db = mongoose.connection;
+
+db.on('error', console.error.bind(console, 'connection error:'));
 
 const app = express();
 const port = process.env.PORT || 8099;
