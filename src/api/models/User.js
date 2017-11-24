@@ -4,37 +4,21 @@ import { JWT_SECRET } from '../constants';
 
 export default class User {
     /**
-     * @param  {obj} req A request object
-     */
-    constructor(req) {
-        const { email, username, password } = req.value.body;
-
-        this.email = email;
-        this.username = username;
-        this.password = password;
-    }
-
-    /**
      * Goes to database and searches for users
      * @return {obj} An object containing user
      */
-    async getUser() {
-        return await UserModel.findOne({
-            email: this.email,
-            username: this.username
-        });
+    async getUser(fields) {
+        const { email } = fields;
+
+        return await UserModel.findOne({email});
     }
 
     /**
      * Saves user to database
      * @return {str} Token
      */
-    async registerUser() {
-        const newUser = new UserModel({
-            email: this.email,
-            username: this.username,
-            password: this.password
-        });
+    async registerUser(fields) {
+        const newUser = new UserModel(fields);
 
         await newUser.save();
         return User.signToken(newUser);
