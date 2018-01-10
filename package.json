@@ -7,7 +7,7 @@
         "webpack": "webpack",
         "start-dev": "nodemon dist/server.js",
         "start": "node dist/server.js",
-        "test": "npm run eslint && npm run jest",
+        "test": "export MONGO_TEST_DB=1; npm run eslint && npm run jest",
         "eslint": "eslint .",
         "jest": "jest --coverage --forceExit",
         "node_latest": "docker-compose up node_latest",
@@ -45,6 +45,7 @@
     "dependencies": {
         "bcryptjs": "^2.4.3",
         "body-parser": "^1.18.2",
+        "cors": "^2.8.4",
         "express": "^4.16.2",
         "express-promise-router": "^2.0.0",
         "joi": "^13.0.2",
@@ -53,7 +54,8 @@
         "morgan": "^1.9.0",
         "passport": "^0.4.0",
         "passport-jwt": "^3.0.1",
-        "passport-local": "^1.0.0"
+        "passport-local": "^1.0.0",
+        "socket.io": "^2.0.4"
     },
     "homepage": "https://github.com/alevor657/chat-server#readme"
 }

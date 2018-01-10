@@ -10,17 +10,23 @@ export const signUp = async (req, res) => {
     }
 
     const token = await user.registerUser(fields);
+    const { username, email } = fields;
 
     res.status(201).json({
-        token
+        token,
+        username,
+        email
     });
 };
 
 export const signIn = async (req, res) => {
     const token = await User.signToken(req.user);
+    const { email, username } = req.user;
 
     res.status(202).json({
-        token
+        token,
+        email,
+        username
     });
 };
 

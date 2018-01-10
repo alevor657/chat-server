@@ -1,9 +1,19 @@
 const path = require('path');
 
+const fs = require('fs');
+
+var nodeModules = {};
+
+fs.readdirSync('node_modules').filter(function(x) {
+    return ['.bin'].indexOf(x) === -1;
+}).forEach(function(mod) {
+    nodeModules[mod] = 'commonjs ' + mod;
+});
+
 module.exports = {
     target: 'node',
     entry: path.resolve(__dirname, 'src/index.js'),
-    devtool: 'eval',
+    // devtool: 'eval',
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: 'server.js',
@@ -20,5 +30,6 @@ module.exports = {
                 }
             }
         ]
-    }
+    },
+    externals: nodeModules,
 };
