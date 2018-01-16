@@ -1,0 +1,47 @@
+f21cd29126ba927746f4013c25b4a622
+/* istanbul ignore next */'use strict';Object.defineProperty(exports, "__esModule", { value: true });var cov_15kjog55xk = function () {var path = '/app/src/api/db/models/user.js',hash = 'eb896c8093f5ff8b56a368cdf43e0982a70edea5',global = new Function('return this')(),gcv = '__coverage__',coverageData = { path: '/app/src/api/db/models/user.js', statementMap: { '0': { start: { line: 3, column: 15 }, end: { line: 3, column: 30 } }, '1': { start: { line: 5, column: 19 }, end: { line: 22, column: 2 } }, '2': { start: { line: 25, column: 0 }, end: { line: 35, column: 3 } }, '3': { start: { line: 26, column: 4 }, end: { line: 34, column: 5 } }, '4': { start: { line: 27, column: 21 }, end: { line: 27, column: 45 } }, '5': { start: { line: 28, column: 21 }, end: { line: 28, column: 59 } }, '6': { start: { line: 30, column: 8 }, end: { line: 30, column: 29 } }, '7': { start: { line: 31, column: 8 }, end: { line: 31, column: 15 } }, '8': { start: { line: 33, column: 8 }, end: { line: 33, column: 18 } }, '9': { start: { line: 37, column: 0 }, end: { line: 43, column: 2 } }, '10': { start: { line: 38, column: 4 }, end: { line: 42, column: 5 } }, '11': { start: { line: 39, column: 8 }, end: { line: 39, column: 61 } }, '12': { start: { line: 41, column: 8 }, end: { line: 41, column: 29 } } }, fnMap: { '0': { name: '(anonymous_0)', decl: { start: { line: 25, column: 23 }, end: { line: 25, column: 24 } }, loc: { start: { line: 25, column: 45 }, end: { line: 35, column: 1 } }, line: 25 }, '1': { name: '(anonymous_1)', decl: { start: { line: 37, column: 38 }, end: { line: 37, column: 39 } }, loc: { start: { line: 37, column: 64 }, end: { line: 43, column: 1 } }, line: 37 } }, branchMap: {}, s: { '0': 0, '1': 0, '2': 0, '3': 0, '4': 0, '5': 0, '6': 0, '7': 0, '8': 0, '9': 0, '10': 0, '11': 0, '12': 0 }, f: { '0': 0, '1': 0 }, b: {}, _coverageSchema: '332fd63041d2c1bcb487cc26dd0d5f7d97098a6c' },coverage = global[gcv] || (global[gcv] = {});if (coverage[path] && coverage[path].hash === hash) {return coverage[path];}coverageData.hash = hash;return coverage[path] = coverageData;}();var /* istanbul ignore next */_mongoose = require('mongoose'); /* istanbul ignore next */var _mongoose2 = _interopRequireDefault(_mongoose);
+var /* istanbul ignore next */_bcryptjs = require('bcryptjs'); /* istanbul ignore next */var _bcryptjs2 = _interopRequireDefault(_bcryptjs);function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function _asyncToGenerator(fn) {return function () {var gen = fn.apply(this, arguments);return new Promise(function (resolve, reject) {function step(key, arg) {try {var info = gen[key](arg);var value = info.value;} catch (error) {reject(error);return;}if (info.done) {resolve(value);} else {return Promise.resolve(value).then(function (value) {step("next", value);}, function (err) {step("throw", err);});}}return step("next");});};}
+const Schema = /* istanbul ignore next */(cov_15kjog55xk.s[0]++, /* istanbul ignore next */_mongoose2.default.Schema);
+
+const userSchema = /* istanbul ignore next */(cov_15kjog55xk.s[1]++, new Schema({
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+        lowercase: true },
+
+    username: {
+        type: String,
+        required: true,
+        unique: true,
+        lowercase: true },
+
+    password: {
+        type: String,
+        required: true } }));
+
+
+
+// Hash passwords before save
+/* istanbul ignore next */cov_15kjog55xk.s[2]++;userSchema.pre('save', /* istanbul ignore next */(() => {var _ref = _asyncToGenerator(function* (next) {/* istanbul ignore next */cov_15kjog55xk.f[0]++;cov_15kjog55xk.s[3]++;
+        try {
+            const salt = /* istanbul ignore next */(cov_15kjog55xk.s[4]++, yield (/* istanbul ignore next */_bcryptjs2.default.genSalt(10)));
+            const hash = /* istanbul ignore next */(cov_15kjog55xk.s[5]++, yield (/* istanbul ignore next */_bcryptjs2.default.hash(this.password, salt))); /* istanbul ignore next */cov_15kjog55xk.s[6]++;
+
+            this.password = hash; /* istanbul ignore next */cov_15kjog55xk.s[7]++;
+            next();
+        } catch (err) {/* istanbul ignore next */cov_15kjog55xk.s[8]++;
+            next(err);
+        }
+    });return function (_x) {return _ref.apply(this, arguments);};})()); /* istanbul ignore next */cov_15kjog55xk.s[9]++;
+
+userSchema.methods.validatePassword = /* istanbul ignore next */(() => {var _ref2 = _asyncToGenerator(function* (password) {/* istanbul ignore next */cov_15kjog55xk.f[1]++;cov_15kjog55xk.s[10]++;
+        try {/* istanbul ignore next */cov_15kjog55xk.s[11]++;
+            return yield (/* istanbul ignore next */_bcryptjs2.default.compare(password, this.password));
+        } catch (err) {/* istanbul ignore next */cov_15kjog55xk.s[12]++;
+            throw new Error(err);
+        }
+    });return function (_x2) {return _ref2.apply(this, arguments);};})(); /* istanbul ignore next */exports.default =
+
+/* istanbul ignore next */_mongoose2.default.model('user', userSchema);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInVzZXIuanMiXSwibmFtZXMiOlsiU2NoZW1hIiwidXNlclNjaGVtYSIsImVtYWlsIiwidHlwZSIsIlN0cmluZyIsInJlcXVpcmVkIiwidW5pcXVlIiwibG93ZXJjYXNlIiwidXNlcm5hbWUiLCJwYXNzd29yZCIsInByZSIsIm5leHQiLCJzYWx0IiwiZ2VuU2FsdCIsImhhc2giLCJlcnIiLCJtZXRob2RzIiwidmFsaWRhdGVQYXNzd29yZCIsImNvbXBhcmUiLCJFcnJvciIsIm1vZGVsIl0sIm1hcHBpbmdzIjoiOGlFQUFBLDhEO0FBQ0EsOEQ7QUFDQSxNQUFNQSwyREFBUyw2Q0FBU0EsTUFBbEIsQ0FBTjs7QUFFQSxNQUFNQywrREFBYSxJQUFJRCxNQUFKLENBQVc7QUFDMUJFLFdBQU87QUFDSEMsY0FBTUMsTUFESDtBQUVIQyxrQkFBVSxJQUZQO0FBR0hDLGdCQUFRLElBSEw7QUFJSEMsbUJBQVcsSUFKUixFQURtQjs7QUFPMUJDLGNBQVU7QUFDTkwsY0FBTUMsTUFEQTtBQUVOQyxrQkFBVSxJQUZKO0FBR05DLGdCQUFRLElBSEY7QUFJTkMsbUJBQVcsSUFKTCxFQVBnQjs7QUFhMUJFLGNBQVU7QUFDTk4sY0FBTUMsTUFEQTtBQUVOQyxrQkFBVSxJQUZKLEVBYmdCLEVBQVgsQ0FBYixDQUFOOzs7O0FBbUJBO2dEQUNBSixXQUFXUyxHQUFYLENBQWUsTUFBZixpRUFBdUIsV0FBZ0JDLElBQWhCLEVBQXNCO0FBQ3pDLFlBQUk7QUFDQSxrQkFBTUMseURBQU8sTUFBTSw4Q0FBT0MsT0FBUCxDQUFlLEVBQWYsQ0FBTixDQUFQLENBQU47QUFDQSxrQkFBTUMseURBQU8sTUFBTSw4Q0FBT0EsSUFBUCxDQUFZLEtBQUtMLFFBQWpCLEVBQTJCRyxJQUEzQixDQUFOLENBQVAsQ0FBTixDQUZBOztBQUlBLGlCQUFLSCxRQUFMLEdBQWdCSyxJQUFoQixDQUpBO0FBS0FIO0FBQ0gsU0FORCxDQU1FLE9BQU9JLEdBQVAsRUFBWTtBQUNWSixpQkFBS0ksR0FBTDtBQUNIO0FBQ0osS0FWRCxtRTs7QUFZQWQsV0FBV2UsT0FBWCxDQUFtQkMsZ0JBQW5CLG1FQUFzQyxXQUFnQlIsUUFBaEIsRUFBMEI7QUFDNUQsWUFBSTtBQUNBLG1CQUFPLE1BQU0sOENBQU9TLE9BQVAsQ0FBZVQsUUFBZixFQUF5QixLQUFLQSxRQUE5QixDQUFOLENBQVA7QUFDSCxTQUZELENBRUUsT0FBT00sR0FBUCxFQUFZO0FBQ1Ysa0JBQU0sSUFBSUksS0FBSixDQUFVSixHQUFWLENBQU47QUFDSDtBQUNKLEtBTkQsb0U7O0FBUWUsNkNBQVNLLEtBQVQsQ0FBZSxNQUFmLEVBQXVCbkIsVUFBdkIsQyIsImZpbGUiOiJ1c2VyLmpzIiwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IG1vbmdvb3NlIGZyb20gJ21vbmdvb3NlJztcbmltcG9ydCBiY3J5cHQgZnJvbSAnYmNyeXB0anMnO1xuY29uc3QgU2NoZW1hID0gbW9uZ29vc2UuU2NoZW1hO1xuXG5jb25zdCB1c2VyU2NoZW1hID0gbmV3IFNjaGVtYSh7XG4gICAgZW1haWw6IHtcbiAgICAgICAgdHlwZTogU3RyaW5nLFxuICAgICAgICByZXF1aXJlZDogdHJ1ZSxcbiAgICAgICAgdW5pcXVlOiB0cnVlLFxuICAgICAgICBsb3dlcmNhc2U6IHRydWVcbiAgICB9LFxuICAgIHVzZXJuYW1lOiB7XG4gICAgICAgIHR5cGU6IFN0cmluZyxcbiAgICAgICAgcmVxdWlyZWQ6IHRydWUsXG4gICAgICAgIHVuaXF1ZTogdHJ1ZSxcbiAgICAgICAgbG93ZXJjYXNlOiB0cnVlXG4gICAgfSxcbiAgICBwYXNzd29yZDoge1xuICAgICAgICB0eXBlOiBTdHJpbmcsXG4gICAgICAgIHJlcXVpcmVkOiB0cnVlXG4gICAgfVxufSk7XG5cbi8vIEhhc2ggcGFzc3dvcmRzIGJlZm9yZSBzYXZlXG51c2VyU2NoZW1hLnByZSgnc2F2ZScsIGFzeW5jIGZ1bmN0aW9uIChuZXh0KSB7XG4gICAgdHJ5IHtcbiAgICAgICAgY29uc3Qgc2FsdCA9IGF3YWl0IGJjcnlwdC5nZW5TYWx0KDEwKTtcbiAgICAgICAgY29uc3QgaGFzaCA9IGF3YWl0IGJjcnlwdC5oYXNoKHRoaXMucGFzc3dvcmQsIHNhbHQpO1xuXG4gICAgICAgIHRoaXMucGFzc3dvcmQgPSBoYXNoO1xuICAgICAgICBuZXh0KCk7XG4gICAgfSBjYXRjaCAoZXJyKSB7XG4gICAgICAgIG5leHQoZXJyKTtcbiAgICB9XG59KTtcblxudXNlclNjaGVtYS5tZXRob2RzLnZhbGlkYXRlUGFzc3dvcmQgPSBhc3luYyBmdW5jdGlvbiAocGFzc3dvcmQpIHtcbiAgICB0cnkge1xuICAgICAgICByZXR1cm4gYXdhaXQgYmNyeXB0LmNvbXBhcmUocGFzc3dvcmQsIHRoaXMucGFzc3dvcmQpO1xuICAgIH0gY2F0Y2ggKGVycikge1xuICAgICAgICB0aHJvdyBuZXcgRXJyb3IoZXJyKTtcbiAgICB9XG59O1xuXG5leHBvcnQgZGVmYXVsdCBtb25nb29zZS5tb2RlbCgndXNlcicsIHVzZXJTY2hlbWEpO1xuIl19

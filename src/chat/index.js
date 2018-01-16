@@ -44,6 +44,7 @@ class Chat {
             }
         } else {
             // Save to db
+
             io.sockets.emit('message', data);
         }
     }

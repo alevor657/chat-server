@@ -68,153 +68,982 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", {\n  value: true\n});\nvar USERNAME_MAX_LENGTH = exports.USERNAME_MAX_LENGTH = 20;\nvar USERNAME_MIN_LENGTH = exports.USERNAME_MIN_LENGTH = 3;\n\nvar EMAIL_MAX_LENGTH = exports.EMAIL_MAX_LENGTH = 100;\nvar EMAIL_MIN_LENGTH = exports.EMAIL_MIN_LENGTH = 4;\n\nvar PASSWORD_MAX_LENGTH = exports.PASSWORD_MAX_LENGTH = 20;\nvar PASSWORD_MIN_LENGTH = exports.PASSWORD_MIN_LENGTH = 3;\n\nvar JWT_SECRET = exports.JWT_SECRET = 'DEUSVULT';\n\n//////////////////\n// WEBPACK FOOTER\n// ./src/api/constants.js\n// module id = 0\n// module chunks = 0\n\n//# sourceURL=webpack:///./src/api/constants.js?");
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var USERNAME_MAX_LENGTH = exports.USERNAME_MAX_LENGTH = 20;
+var USERNAME_MIN_LENGTH = exports.USERNAME_MIN_LENGTH = 3;
+
+var EMAIL_MAX_LENGTH = exports.EMAIL_MAX_LENGTH = 100;
+var EMAIL_MIN_LENGTH = exports.EMAIL_MIN_LENGTH = 4;
+
+var PASSWORD_MAX_LENGTH = exports.PASSWORD_MAX_LENGTH = 20;
+var PASSWORD_MIN_LENGTH = exports.PASSWORD_MIN_LENGTH = 3;
+
+var JWT_SECRET = exports.JWT_SECRET = 'DEUSVULT';
 
 /***/ }),
 /* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", {\n    value: true\n});\n\nvar _mongoose = __webpack_require__(2);\n\nvar _mongoose2 = _interopRequireDefault(_mongoose);\n\nvar _bcryptjs = __webpack_require__(11);\n\nvar _bcryptjs2 = _interopRequireDefault(_bcryptjs);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nfunction _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step(\"next\", value); }, function (err) { step(\"throw\", err); }); } } return step(\"next\"); }); }; }\n\nvar Schema = _mongoose2.default.Schema;\n\nvar userSchema = new Schema({\n    email: {\n        type: String,\n        required: true,\n        unique: true,\n        lowercase: true\n    },\n    username: {\n        type: String,\n        required: true,\n        unique: true,\n        lowercase: true\n    },\n    password: {\n        type: String,\n        required: true\n    }\n});\n\n// Hash passwords before save\nuserSchema.pre('save', function () {\n    var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(next) {\n        var salt, hash;\n        return regeneratorRuntime.wrap(function _callee$(_context) {\n            while (1) {\n                switch (_context.prev = _context.next) {\n                    case 0:\n                        _context.prev = 0;\n                        _context.next = 3;\n                        return _bcryptjs2.default.genSalt(10);\n\n                    case 3:\n                        salt = _context.sent;\n                        _context.next = 6;\n                        return _bcryptjs2.default.hash(this.password, salt);\n\n                    case 6:\n                        hash = _context.sent;\n\n\n                        this.password = hash;\n                        next();\n                        _context.next = 14;\n                        break;\n\n                    case 11:\n                        _context.prev = 11;\n                        _context.t0 = _context['catch'](0);\n\n                        next(_context.t0);\n\n                    case 14:\n                    case 'end':\n                        return _context.stop();\n                }\n            }\n        }, _callee, this, [[0, 11]]);\n    }));\n\n    return function (_x) {\n        return _ref.apply(this, arguments);\n    };\n}());\n\nuserSchema.methods.validatePassword = function () {\n    var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(password) {\n        return regeneratorRuntime.wrap(function _callee2$(_context2) {\n            while (1) {\n                switch (_context2.prev = _context2.next) {\n                    case 0:\n                        _context2.prev = 0;\n                        _context2.next = 3;\n                        return _bcryptjs2.default.compare(password, this.password);\n\n                    case 3:\n                        return _context2.abrupt('return', _context2.sent);\n\n                    case 6:\n                        _context2.prev = 6;\n                        _context2.t0 = _context2['catch'](0);\n                        throw new Error(_context2.t0);\n\n                    case 9:\n                    case 'end':\n                        return _context2.stop();\n                }\n            }\n        }, _callee2, this, [[0, 6]]);\n    }));\n\n    return function (_x2) {\n        return _ref2.apply(this, arguments);\n    };\n}();\n\nexports.default = _mongoose2.default.model('user', userSchema);\n\n//////////////////\n// WEBPACK FOOTER\n// ./src/api/db/models/user.js\n// module id = 1\n// module chunks = 0\n\n//# sourceURL=webpack:///./src/api/db/models/user.js?");
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _mongoose = __webpack_require__(2);
+
+var _mongoose2 = _interopRequireDefault(_mongoose);
+
+var _bcryptjs = __webpack_require__(11);
+
+var _bcryptjs2 = _interopRequireDefault(_bcryptjs);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+var Schema = _mongoose2.default.Schema;
+
+var userSchema = new Schema({
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+        lowercase: true
+    },
+    username: {
+        type: String,
+        required: true,
+        unique: true,
+        lowercase: true
+    },
+    password: {
+        type: String,
+        required: true
+    }
+});
+
+// Hash passwords before save
+userSchema.pre('save', function () {
+    var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(next) {
+        var salt, hash;
+        return regeneratorRuntime.wrap(function _callee$(_context) {
+            while (1) {
+                switch (_context.prev = _context.next) {
+                    case 0:
+                        _context.prev = 0;
+                        _context.next = 3;
+                        return _bcryptjs2.default.genSalt(10);
+
+                    case 3:
+                        salt = _context.sent;
+                        _context.next = 6;
+                        return _bcryptjs2.default.hash(this.password, salt);
+
+                    case 6:
+                        hash = _context.sent;
+
+
+                        this.password = hash;
+                        next();
+                        _context.next = 14;
+                        break;
+
+                    case 11:
+                        _context.prev = 11;
+                        _context.t0 = _context['catch'](0);
+
+                        next(_context.t0);
+
+                    case 14:
+                    case 'end':
+                        return _context.stop();
+                }
+            }
+        }, _callee, this, [[0, 11]]);
+    }));
+
+    return function (_x) {
+        return _ref.apply(this, arguments);
+    };
+}());
+
+userSchema.methods.validatePassword = function () {
+    var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(password) {
+        return regeneratorRuntime.wrap(function _callee2$(_context2) {
+            while (1) {
+                switch (_context2.prev = _context2.next) {
+                    case 0:
+                        _context2.prev = 0;
+                        _context2.next = 3;
+                        return _bcryptjs2.default.compare(password, this.password);
+
+                    case 3:
+                        return _context2.abrupt('return', _context2.sent);
+
+                    case 6:
+                        _context2.prev = 6;
+                        _context2.t0 = _context2['catch'](0);
+                        throw new Error(_context2.t0);
+
+                    case 9:
+                    case 'end':
+                        return _context2.stop();
+                }
+            }
+        }, _callee2, this, [[0, 6]]);
+    }));
+
+    return function (_x2) {
+        return _ref2.apply(this, arguments);
+    };
+}();
+
+exports.default = _mongoose2.default.model('user', userSchema);
 
 /***/ }),
 /* 2 */
 /***/ (function(module, exports) {
 
-eval("module.exports = require(\"mongoose\");\n\n//////////////////\n// WEBPACK FOOTER\n// external \"mongoose\"\n// module id = 2\n// module chunks = 0\n\n//# sourceURL=webpack:///external_%22mongoose%22?");
+module.exports = require("mongoose");
 
 /***/ }),
 /* 3 */
 /***/ (function(module, exports) {
 
-eval("module.exports = require(\"passport\");\n\n//////////////////\n// WEBPACK FOOTER\n// external \"passport\"\n// module id = 3\n// module chunks = 0\n\n//# sourceURL=webpack:///external_%22passport%22?");
+module.exports = require("passport");
 
 /***/ }),
 /* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", {\n    value: true\n});\n\n__webpack_require__(5);\n\nvar _express = __webpack_require__(6);\n\nvar _express2 = _interopRequireDefault(_express);\n\nvar _user = __webpack_require__(7);\n\nvar _user2 = _interopRequireDefault(_user);\n\nvar _morgan = __webpack_require__(18);\n\nvar _morgan2 = _interopRequireDefault(_morgan);\n\nvar _bodyParser = __webpack_require__(19);\n\nvar _bodyParser2 = _interopRequireDefault(_bodyParser);\n\nvar _mongoose = __webpack_require__(2);\n\nvar _mongoose2 = _interopRequireDefault(_mongoose);\n\nvar _cors = __webpack_require__(20);\n\nvar _cors2 = _interopRequireDefault(_cors);\n\nvar _index = __webpack_require__(21);\n\nvar _index2 = _interopRequireDefault(_index);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nif (process.env.MONGO_TEST_DB) {\n    console.warn(\"TEST MODE - connecting to test database (might be down)\");\n    _mongoose2.default.connect('mongodb://tester:tester@80.78.218.152:27017/chatAPI');\n} else {\n    _mongoose2.default.connect('mongodb://localhost/chatAPI');\n}\n\n_mongoose2.default.Promise = global.Promise;\nvar db = _mongoose2.default.connection;\n\ndb.on('error', console.error.bind(console, 'connection error:'));\n\nvar app = (0, _express2.default)();\n\nvar port = process.env.DBWEBB_PORT || 1338;\n\n// Middleware\napp.use((0, _morgan2.default)('dev'));\napp.use(_bodyParser2.default.json());\n\n// Fix cors\napp.use((0, _cors2.default)());\n\n// Routes\napp.use('/user', _user2.default);\n\nvar server = __webpack_require__(22).Server(app);\nvar io = __webpack_require__(23)(server);\n\nnew _index2.default(io);\n\n// Start API\nserver.listen(port, function () {\n    return console.log('App is listening on http://localhost:' + port);\n});\n\nexports.default = server;\n\n//////////////////\n// WEBPACK FOOTER\n// ./src/index.js\n// module id = 4\n// module chunks = 0\n\n//# sourceURL=webpack:///./src/index.js?");
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+__webpack_require__(5);
+
+var _express = __webpack_require__(6);
+
+var _express2 = _interopRequireDefault(_express);
+
+var _user = __webpack_require__(7);
+
+var _user2 = _interopRequireDefault(_user);
+
+var _morgan = __webpack_require__(18);
+
+var _morgan2 = _interopRequireDefault(_morgan);
+
+var _bodyParser = __webpack_require__(19);
+
+var _bodyParser2 = _interopRequireDefault(_bodyParser);
+
+var _mongoose = __webpack_require__(2);
+
+var _mongoose2 = _interopRequireDefault(_mongoose);
+
+var _cors = __webpack_require__(20);
+
+var _cors2 = _interopRequireDefault(_cors);
+
+var _chalk = __webpack_require__(21);
+
+var _chalk2 = _interopRequireDefault(_chalk);
+
+var _index = __webpack_require__(22);
+
+var _index2 = _interopRequireDefault(_index);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+if (process.env.MONGO_TEST_DB) {
+    _mongoose2.default.connect('mongodb://tester:tester@80.78.218.152:27017/chatAPI', function (err) {
+        if (err) {
+            console.log(_chalk2.default.yellow.bgRed.bold('Could not connect to test database'));
+            process.exit(2);
+        } else {
+            console.log(_chalk2.default.green.bold('Connected to test database'));
+        }
+    });
+} else {
+    _mongoose2.default.connect('mongodb://localhost/chatAPI', function (err) {
+        if (err) {
+            console.log(_chalk2.default.yellow.bgRed.bold('Could not connect to local database'));
+            process.exit(2);
+        } else {
+            console.log(_chalk2.default.green.bold('Connected to local database'));
+        }
+    });
+}
+
+_mongoose2.default.Promise = global.Promise;
+var db = _mongoose2.default.connection;
+
+db.on('error', console.error.bind(console, 'connection error:'));
+
+var app = (0, _express2.default)();
+
+var port = process.env.DBWEBB_PORT || 1338;
+
+// Middleware
+app.use((0, _morgan2.default)('dev'));
+app.use(_bodyParser2.default.json());
+
+// Fix cors
+app.use((0, _cors2.default)());
+
+// Routes
+app.use('/user', _user2.default);
+
+var server = __webpack_require__(23).Server(app);
+var io = __webpack_require__(24)(server);
+
+new _index2.default(io);
+
+// Start API
+server.listen(port, function () {
+    return console.log(_chalk2.default.green.bold('App is listening on http://localhost:' + port));
+});
+
+exports.default = server;
 
 /***/ }),
 /* 5 */
 /***/ (function(module, exports) {
 
-eval("module.exports = require(\"babel-polyfill\");\n\n//////////////////\n// WEBPACK FOOTER\n// external \"babel-polyfill\"\n// module id = 5\n// module chunks = 0\n\n//# sourceURL=webpack:///external_%22babel-polyfill%22?");
+module.exports = require("babel-polyfill");
 
 /***/ }),
 /* 6 */
 /***/ (function(module, exports) {
 
-eval("module.exports = require(\"express\");\n\n//////////////////\n// WEBPACK FOOTER\n// external \"express\"\n// module id = 6\n// module chunks = 0\n\n//# sourceURL=webpack:///external_%22express%22?");
+module.exports = require("express");
 
 /***/ }),
 /* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", {\n  value: true\n});\n\nvar _user = __webpack_require__(8);\n\nvar UserController = _interopRequireWildcard(_user);\n\nvar _postValidation = __webpack_require__(12);\n\nvar _passport = __webpack_require__(3);\n\nvar _passport2 = _interopRequireDefault(_passport);\n\n__webpack_require__(14);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nfunction _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }\n\nvar checkSignIn = _passport2.default.authenticate('local', { session: false });\nvar checkJWT = _passport2.default.authenticate('jwt', { session: false });\n\nvar router = __webpack_require__(17)();\n\nrouter.post('/signup', (0, _postValidation.validateBody)(_postValidation.schemas.signUpSchema), UserController.signUp);\nrouter.post('/signin', (0, _postValidation.validateBody)(_postValidation.schemas.signInSchema), checkSignIn, UserController.signIn);\nrouter.delete('/', UserController.deleteUsers);\n\n// hiddden\nrouter.get('/profile', checkJWT, UserController.profile);\n// router.get('/profile', UserController.profile);\n\nexports.default = router;\n\n//////////////////\n// WEBPACK FOOTER\n// ./src/api/routes/user.js\n// module id = 7\n// module chunks = 0\n\n//# sourceURL=webpack:///./src/api/routes/user.js?");
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _user = __webpack_require__(8);
+
+var UserController = _interopRequireWildcard(_user);
+
+var _postValidation = __webpack_require__(12);
+
+var _passport = __webpack_require__(3);
+
+var _passport2 = _interopRequireDefault(_passport);
+
+__webpack_require__(14);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+var checkSignIn = _passport2.default.authenticate('local', { session: false });
+var checkJWT = _passport2.default.authenticate('jwt', { session: false });
+
+var router = __webpack_require__(17)();
+
+router.post('/signup', (0, _postValidation.validateBody)(_postValidation.schemas.signUpSchema), UserController.signUp);
+router.post('/signin', (0, _postValidation.validateBody)(_postValidation.schemas.signInSchema), checkSignIn, UserController.signIn);
+router.delete('/', UserController.deleteUsers);
+
+// hiddden
+router.get('/profile', checkJWT, UserController.profile);
+// router.get('/profile', UserController.profile);
+
+exports.default = router;
 
 /***/ }),
 /* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", {\n    value: true\n});\nexports.deleteUsers = exports.profile = exports.signIn = exports.signUp = undefined;\n\nvar _User = __webpack_require__(9);\n\nvar _User2 = _interopRequireDefault(_User);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nfunction _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step(\"next\", value); }, function (err) { step(\"throw\", err); }); } } return step(\"next\"); }); }; }\n\nvar signUp = exports.signUp = function () {\n    var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(req, res) {\n        var user, fields, foundUser, token, username, email;\n        return regeneratorRuntime.wrap(function _callee$(_context) {\n            while (1) {\n                switch (_context.prev = _context.next) {\n                    case 0:\n                        user = new _User2.default();\n                        fields = req.value.body;\n                        _context.next = 4;\n                        return user.getUser(fields);\n\n                    case 4:\n                        foundUser = _context.sent;\n\n                        if (!foundUser) {\n                            _context.next = 7;\n                            break;\n                        }\n\n                        return _context.abrupt('return', res.status(403).json({ 'error': \"Email or username is alredy in use\" }));\n\n                    case 7:\n                        _context.next = 9;\n                        return user.registerUser(fields);\n\n                    case 9:\n                        token = _context.sent;\n                        username = fields.username, email = fields.email;\n\n\n                        res.status(201).json({\n                            token: token,\n                            username: username,\n                            email: email\n                        });\n\n                    case 12:\n                    case 'end':\n                        return _context.stop();\n                }\n            }\n        }, _callee, undefined);\n    }));\n\n    return function signUp(_x, _x2) {\n        return _ref.apply(this, arguments);\n    };\n}();\n\nvar signIn = exports.signIn = function () {\n    var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(req, res) {\n        var token, _req$user, email, username;\n\n        return regeneratorRuntime.wrap(function _callee2$(_context2) {\n            while (1) {\n                switch (_context2.prev = _context2.next) {\n                    case 0:\n                        _context2.next = 2;\n                        return _User2.default.signToken(req.user);\n\n                    case 2:\n                        token = _context2.sent;\n                        _req$user = req.user, email = _req$user.email, username = _req$user.username;\n\n\n                        res.status(202).json({\n                            token: token,\n                            email: email,\n                            username: username\n                        });\n\n                    case 5:\n                    case 'end':\n                        return _context2.stop();\n                }\n            }\n        }, _callee2, undefined);\n    }));\n\n    return function signIn(_x3, _x4) {\n        return _ref2.apply(this, arguments);\n    };\n}();\n\nvar profile = exports.profile = function () {\n    var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(req, res) {\n        return regeneratorRuntime.wrap(function _callee3$(_context3) {\n            while (1) {\n                switch (_context3.prev = _context3.next) {\n                    case 0:\n                        res.json('profile');\n\n                    case 1:\n                    case 'end':\n                        return _context3.stop();\n                }\n            }\n        }, _callee3, undefined);\n    }));\n\n    return function profile(_x5, _x6) {\n        return _ref3.apply(this, arguments);\n    };\n}();\n\nvar deleteUsers = exports.deleteUsers = function () {\n    var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(req, res) {\n        return regeneratorRuntime.wrap(function _callee4$(_context4) {\n            while (1) {\n                switch (_context4.prev = _context4.next) {\n                    case 0:\n                        _context4.next = 2;\n                        return _User2.default.dropAll();\n\n                    case 2:\n                        res.json('dropped all users');\n\n                    case 3:\n                    case 'end':\n                        return _context4.stop();\n                }\n            }\n        }, _callee4, undefined);\n    }));\n\n    return function deleteUsers(_x7, _x8) {\n        return _ref4.apply(this, arguments);\n    };\n}();\n\n//////////////////\n// WEBPACK FOOTER\n// ./src/api/controllers/user.js\n// module id = 8\n// module chunks = 0\n\n//# sourceURL=webpack:///./src/api/controllers/user.js?");
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.deleteUsers = exports.profile = exports.signIn = exports.signUp = undefined;
+
+var _User = __webpack_require__(9);
+
+var _User2 = _interopRequireDefault(_User);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+var signUp = exports.signUp = function () {
+    var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(req, res) {
+        var user, fields, foundUser, token, username, email;
+        return regeneratorRuntime.wrap(function _callee$(_context) {
+            while (1) {
+                switch (_context.prev = _context.next) {
+                    case 0:
+                        user = new _User2.default();
+                        fields = req.value.body;
+                        _context.next = 4;
+                        return user.getUser(fields);
+
+                    case 4:
+                        foundUser = _context.sent;
+
+                        if (!foundUser) {
+                            _context.next = 7;
+                            break;
+                        }
+
+                        return _context.abrupt('return', res.status(403).json({ 'error': "Email or username is alredy in use" }));
+
+                    case 7:
+                        _context.next = 9;
+                        return user.registerUser(fields);
+
+                    case 9:
+                        token = _context.sent;
+                        username = fields.username, email = fields.email;
+
+
+                        res.status(201).json({
+                            token: token,
+                            username: username,
+                            email: email
+                        });
+
+                    case 12:
+                    case 'end':
+                        return _context.stop();
+                }
+            }
+        }, _callee, undefined);
+    }));
+
+    return function signUp(_x, _x2) {
+        return _ref.apply(this, arguments);
+    };
+}();
+
+var signIn = exports.signIn = function () {
+    var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(req, res) {
+        var token, _req$user, email, username;
+
+        return regeneratorRuntime.wrap(function _callee2$(_context2) {
+            while (1) {
+                switch (_context2.prev = _context2.next) {
+                    case 0:
+                        _context2.next = 2;
+                        return _User2.default.signToken(req.user);
+
+                    case 2:
+                        token = _context2.sent;
+                        _req$user = req.user, email = _req$user.email, username = _req$user.username;
+
+
+                        res.status(202).json({
+                            token: token,
+                            email: email,
+                            username: username
+                        });
+
+                    case 5:
+                    case 'end':
+                        return _context2.stop();
+                }
+            }
+        }, _callee2, undefined);
+    }));
+
+    return function signIn(_x3, _x4) {
+        return _ref2.apply(this, arguments);
+    };
+}();
+
+var profile = exports.profile = function () {
+    var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(req, res) {
+        return regeneratorRuntime.wrap(function _callee3$(_context3) {
+            while (1) {
+                switch (_context3.prev = _context3.next) {
+                    case 0:
+                        res.json('profile');
+
+                    case 1:
+                    case 'end':
+                        return _context3.stop();
+                }
+            }
+        }, _callee3, undefined);
+    }));
+
+    return function profile(_x5, _x6) {
+        return _ref3.apply(this, arguments);
+    };
+}();
+
+var deleteUsers = exports.deleteUsers = function () {
+    var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(req, res) {
+        return regeneratorRuntime.wrap(function _callee4$(_context4) {
+            while (1) {
+                switch (_context4.prev = _context4.next) {
+                    case 0:
+                        _context4.next = 2;
+                        return _User2.default.dropAll();
+
+                    case 2:
+                        res.json('dropped all users');
+
+                    case 3:
+                    case 'end':
+                        return _context4.stop();
+                }
+            }
+        }, _callee4, undefined);
+    }));
+
+    return function deleteUsers(_x7, _x8) {
+        return _ref4.apply(this, arguments);
+    };
+}();
 
 /***/ }),
 /* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", {\n    value: true\n});\n\nvar _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (\"value\" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();\n\nvar _jsonwebtoken = __webpack_require__(10);\n\nvar _jsonwebtoken2 = _interopRequireDefault(_jsonwebtoken);\n\nvar _user = __webpack_require__(1);\n\nvar _user2 = _interopRequireDefault(_user);\n\nvar _constants = __webpack_require__(0);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nfunction _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step(\"next\", value); }, function (err) { step(\"throw\", err); }); } } return step(\"next\"); }); }; }\n\nfunction _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError(\"Cannot call a class as a function\"); } }\n\nvar User = function () {\n    function User() {\n        _classCallCheck(this, User);\n    }\n\n    _createClass(User, [{\n        key: 'getUser',\n\n        /**\n         * Goes to database and searches for users\n         * @return {obj} An object containing user\n         */\n        value: function () {\n            var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(fields) {\n                var email;\n                return regeneratorRuntime.wrap(function _callee$(_context) {\n                    while (1) {\n                        switch (_context.prev = _context.next) {\n                            case 0:\n                                email = fields.email;\n                                _context.next = 3;\n                                return _user2.default.findOne({ email: email });\n\n                            case 3:\n                                return _context.abrupt('return', _context.sent);\n\n                            case 4:\n                            case 'end':\n                                return _context.stop();\n                        }\n                    }\n                }, _callee, this);\n            }));\n\n            function getUser(_x) {\n                return _ref.apply(this, arguments);\n            }\n\n            return getUser;\n        }()\n\n        /**\n         * Saves user to database\n         * @return {str} Token\n         */\n\n    }, {\n        key: 'registerUser',\n        value: function () {\n            var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(fields) {\n                var newUser;\n                return regeneratorRuntime.wrap(function _callee2$(_context2) {\n                    while (1) {\n                        switch (_context2.prev = _context2.next) {\n                            case 0:\n                                newUser = new _user2.default(fields);\n                                _context2.next = 3;\n                                return newUser.save();\n\n                            case 3:\n                                return _context2.abrupt('return', User.signToken(newUser));\n\n                            case 4:\n                            case 'end':\n                                return _context2.stop();\n                        }\n                    }\n                }, _callee2, this);\n            }));\n\n            function registerUser(_x2) {\n                return _ref2.apply(this, arguments);\n            }\n\n            return registerUser;\n        }()\n\n        /**\n         * Generates a token for given user\n         * @param  {obj} user A user object\n         * @return {str}      JWT token\n         */\n\n    }], [{\n        key: 'signToken',\n        value: function signToken(user) {\n            return _jsonwebtoken2.default.sign({\n                iss: 'Chatapp',\n                sub: user.id,\n                iat: new Date().getTime(), // current time\n                exp: new Date().setDate(new Date().getDate() + 1) // current time + 1 day ahead\n            }, _constants.JWT_SECRET);\n        }\n\n        // For development\n\n    }, {\n        key: 'dropAll',\n        value: function () {\n            var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {\n                return regeneratorRuntime.wrap(function _callee3$(_context3) {\n                    while (1) {\n                        switch (_context3.prev = _context3.next) {\n                            case 0:\n                                _context3.next = 2;\n                                return _user2.default.remove({});\n\n                            case 2:\n                            case 'end':\n                                return _context3.stop();\n                        }\n                    }\n                }, _callee3, this);\n            }));\n\n            function dropAll() {\n                return _ref3.apply(this, arguments);\n            }\n\n            return dropAll;\n        }()\n    }]);\n\n    return User;\n}();\n\nexports.default = User;\n\n//////////////////\n// WEBPACK FOOTER\n// ./src/api/models/User.js\n// module id = 9\n// module chunks = 0\n\n//# sourceURL=webpack:///./src/api/models/User.js?");
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jsonwebtoken = __webpack_require__(10);
+
+var _jsonwebtoken2 = _interopRequireDefault(_jsonwebtoken);
+
+var _user = __webpack_require__(1);
+
+var _user2 = _interopRequireDefault(_user);
+
+var _constants = __webpack_require__(0);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var User = function () {
+    function User() {
+        _classCallCheck(this, User);
+    }
+
+    _createClass(User, [{
+        key: 'getUser',
+
+        /**
+         * Goes to database and searches for users
+         * @return {obj} An object containing user
+         */
+        value: function () {
+            var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(fields) {
+                var email;
+                return regeneratorRuntime.wrap(function _callee$(_context) {
+                    while (1) {
+                        switch (_context.prev = _context.next) {
+                            case 0:
+                                email = fields.email;
+                                _context.next = 3;
+                                return _user2.default.findOne({ email: email });
+
+                            case 3:
+                                return _context.abrupt('return', _context.sent);
+
+                            case 4:
+                            case 'end':
+                                return _context.stop();
+                        }
+                    }
+                }, _callee, this);
+            }));
+
+            function getUser(_x) {
+                return _ref.apply(this, arguments);
+            }
+
+            return getUser;
+        }()
+
+        /**
+         * Saves user to database
+         * @return {str} Token
+         */
+
+    }, {
+        key: 'registerUser',
+        value: function () {
+            var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(fields) {
+                var newUser;
+                return regeneratorRuntime.wrap(function _callee2$(_context2) {
+                    while (1) {
+                        switch (_context2.prev = _context2.next) {
+                            case 0:
+                                newUser = new _user2.default(fields);
+                                _context2.next = 3;
+                                return newUser.save();
+
+                            case 3:
+                                return _context2.abrupt('return', User.signToken(newUser));
+
+                            case 4:
+                            case 'end':
+                                return _context2.stop();
+                        }
+                    }
+                }, _callee2, this);
+            }));
+
+            function registerUser(_x2) {
+                return _ref2.apply(this, arguments);
+            }
+
+            return registerUser;
+        }()
+
+        /**
+         * Generates a token for given user
+         * @param  {obj} user A user object
+         * @return {str}      JWT token
+         */
+
+    }], [{
+        key: 'signToken',
+        value: function signToken(user) {
+            return _jsonwebtoken2.default.sign({
+                iss: 'Chatapp',
+                sub: user.id,
+                iat: new Date().getTime(), // current time
+                exp: new Date().setDate(new Date().getDate() + 1) // current time + 1 day ahead
+            }, _constants.JWT_SECRET);
+        }
+
+        // For development
+
+    }, {
+        key: 'dropAll',
+        value: function () {
+            var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
+                return regeneratorRuntime.wrap(function _callee3$(_context3) {
+                    while (1) {
+                        switch (_context3.prev = _context3.next) {
+                            case 0:
+                                _context3.next = 2;
+                                return _user2.default.remove({});
+
+                            case 2:
+                            case 'end':
+                                return _context3.stop();
+                        }
+                    }
+                }, _callee3, this);
+            }));
+
+            function dropAll() {
+                return _ref3.apply(this, arguments);
+            }
+
+            return dropAll;
+        }()
+    }]);
+
+    return User;
+}();
+
+exports.default = User;
 
 /***/ }),
 /* 10 */
 /***/ (function(module, exports) {
 
-eval("module.exports = require(\"jsonwebtoken\");\n\n//////////////////\n// WEBPACK FOOTER\n// external \"jsonwebtoken\"\n// module id = 10\n// module chunks = 0\n\n//# sourceURL=webpack:///external_%22jsonwebtoken%22?");
+module.exports = require("jsonwebtoken");
 
 /***/ }),
 /* 11 */
 /***/ (function(module, exports) {
 
-eval("module.exports = require(\"bcryptjs\");\n\n//////////////////\n// WEBPACK FOOTER\n// external \"bcryptjs\"\n// module id = 11\n// module chunks = 0\n\n//# sourceURL=webpack:///external_%22bcryptjs%22?");
+module.exports = require("bcryptjs");
 
 /***/ }),
 /* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", {\n    value: true\n});\nexports.schemas = exports.validateBody = undefined;\n\nvar _joi = __webpack_require__(13);\n\nvar _joi2 = _interopRequireDefault(_joi);\n\nvar _constants = __webpack_require__(0);\n\nvar conf = _interopRequireWildcard(_constants);\n\nfunction _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nvar validateBody = exports.validateBody = function validateBody(schema) {\n    return function (req, res, next) {\n        var result = _joi2.default.validate(req.body, schema);\n\n        if (result.error) {\n            return res.status(400).json(result.error);\n        }\n\n        if (!req.value) {\n            req.value = {};\n        }\n\n        req.value['body'] = result.value;\n\n        next();\n    };\n};\n\nvar schemas = exports.schemas = {\n    signInSchema: _joi2.default.object().keys({\n        username: _joi2.default.string().min(conf.USERNAME_MIN_LENGTH).max(conf.USERNAME_MAX_LENGTH).required(),\n        password: _joi2.default.string().required()\n    }),\n    signUpSchema: _joi2.default.object().keys({\n        email: _joi2.default.string().email().min(conf.EMAIL_MIN_LENGTH).max(conf.EMAIL_MAX_LENGTH).required(),\n        username: _joi2.default.string().min(conf.USERNAME_MIN_LENGTH).max(conf.USERNAME_MAX_LENGTH).required(),\n        password: _joi2.default.string().required()\n    })\n};\n\n//////////////////\n// WEBPACK FOOTER\n// ./src/api/validation/postValidation.js\n// module id = 12\n// module chunks = 0\n\n//# sourceURL=webpack:///./src/api/validation/postValidation.js?");
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.schemas = exports.validateBody = undefined;
+
+var _joi = __webpack_require__(13);
+
+var _joi2 = _interopRequireDefault(_joi);
+
+var _constants = __webpack_require__(0);
+
+var conf = _interopRequireWildcard(_constants);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var validateBody = exports.validateBody = function validateBody(schema) {
+    return function (req, res, next) {
+        var result = _joi2.default.validate(req.body, schema);
+
+        if (result.error) {
+            return res.status(400).json(result.error);
+        }
+
+        if (!req.value) {
+            req.value = {};
+        }
+
+        req.value['body'] = result.value;
+
+        next();
+    };
+};
+
+var schemas = exports.schemas = {
+    signInSchema: _joi2.default.object().keys({
+        username: _joi2.default.string().min(conf.USERNAME_MIN_LENGTH).max(conf.USERNAME_MAX_LENGTH).required(),
+        password: _joi2.default.string().required()
+    }),
+    signUpSchema: _joi2.default.object().keys({
+        email: _joi2.default.string().email().min(conf.EMAIL_MIN_LENGTH).max(conf.EMAIL_MAX_LENGTH).required(),
+        username: _joi2.default.string().min(conf.USERNAME_MIN_LENGTH).max(conf.USERNAME_MAX_LENGTH).required(),
+        password: _joi2.default.string().required()
+    })
+};
 
 /***/ }),
 /* 13 */
 /***/ (function(module, exports) {
 
-eval("module.exports = require(\"joi\");\n\n//////////////////\n// WEBPACK FOOTER\n// external \"joi\"\n// module id = 13\n// module chunks = 0\n\n//# sourceURL=webpack:///external_%22joi%22?");
+module.exports = require("joi");
 
 /***/ }),
 /* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\nvar _passport = __webpack_require__(3);\n\nvar _passport2 = _interopRequireDefault(_passport);\n\nvar _passportJwt = __webpack_require__(15);\n\nvar _passportLocal = __webpack_require__(16);\n\nvar _constants = __webpack_require__(0);\n\nvar _user = __webpack_require__(1);\n\nvar _user2 = _interopRequireDefault(_user);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nfunction _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step(\"next\", value); }, function (err) { step(\"throw\", err); }); } } return step(\"next\"); }); }; }\n\n_passport2.default.use(new _passportJwt.Strategy({\n    jwtFromRequest: _passportJwt.ExtractJwt.fromHeader('authorization'),\n    secretOrKey: _constants.JWT_SECRET\n}, function () {\n    var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(payload, done) {\n        var user;\n        return regeneratorRuntime.wrap(function _callee$(_context) {\n            while (1) {\n                switch (_context.prev = _context.next) {\n                    case 0:\n                        _context.prev = 0;\n                        _context.next = 3;\n                        return _user2.default.findById(payload.sub);\n\n                    case 3:\n                        user = _context.sent;\n\n                        if (user) {\n                            _context.next = 6;\n                            break;\n                        }\n\n                        return _context.abrupt('return', done(null, false));\n\n                    case 6:\n\n                        done(null, user);\n                        _context.next = 12;\n                        break;\n\n                    case 9:\n                        _context.prev = 9;\n                        _context.t0 = _context['catch'](0);\n\n                        done(_context.t0, false);\n\n                    case 12:\n                    case 'end':\n                        return _context.stop();\n                }\n            }\n        }, _callee, undefined, [[0, 9]]);\n    }));\n\n    return function (_x, _x2) {\n        return _ref.apply(this, arguments);\n    };\n}()));\n\n_passport2.default.use(new _passportLocal.Strategy({}, function () {\n    var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(username, password, done) {\n        var user, result;\n        return regeneratorRuntime.wrap(function _callee2$(_context2) {\n            while (1) {\n                switch (_context2.prev = _context2.next) {\n                    case 0:\n                        _context2.prev = 0;\n                        _context2.next = 3;\n                        return _user2.default.findOne({ username: username });\n\n                    case 3:\n                        user = _context2.sent;\n\n                        if (user) {\n                            _context2.next = 6;\n                            break;\n                        }\n\n                        return _context2.abrupt('return', done(null, false));\n\n                    case 6:\n                        _context2.next = 8;\n                        return user.validatePassword(password);\n\n                    case 8:\n                        result = _context2.sent;\n\n                        if (result) {\n                            _context2.next = 11;\n                            break;\n                        }\n\n                        return _context2.abrupt('return', done(null, false));\n\n                    case 11:\n\n                        done(null, user);\n                        _context2.next = 17;\n                        break;\n\n                    case 14:\n                        _context2.prev = 14;\n                        _context2.t0 = _context2['catch'](0);\n\n                        done(_context2.t0, false);\n\n                    case 17:\n                    case 'end':\n                        return _context2.stop();\n                }\n            }\n        }, _callee2, undefined, [[0, 14]]);\n    }));\n\n    return function (_x3, _x4, _x5) {\n        return _ref2.apply(this, arguments);\n    };\n}()));\n\n//////////////////\n// WEBPACK FOOTER\n// ./src/api/passport.js\n// module id = 14\n// module chunks = 0\n\n//# sourceURL=webpack:///./src/api/passport.js?");
+
+
+var _passport = __webpack_require__(3);
+
+var _passport2 = _interopRequireDefault(_passport);
+
+var _passportJwt = __webpack_require__(15);
+
+var _passportLocal = __webpack_require__(16);
+
+var _constants = __webpack_require__(0);
+
+var _user = __webpack_require__(1);
+
+var _user2 = _interopRequireDefault(_user);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+_passport2.default.use(new _passportJwt.Strategy({
+    jwtFromRequest: _passportJwt.ExtractJwt.fromHeader('authorization'),
+    secretOrKey: _constants.JWT_SECRET
+}, function () {
+    var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(payload, done) {
+        var user;
+        return regeneratorRuntime.wrap(function _callee$(_context) {
+            while (1) {
+                switch (_context.prev = _context.next) {
+                    case 0:
+                        _context.prev = 0;
+                        _context.next = 3;
+                        return _user2.default.findById(payload.sub);
+
+                    case 3:
+                        user = _context.sent;
+
+                        if (user) {
+                            _context.next = 6;
+                            break;
+                        }
+
+                        return _context.abrupt('return', done(null, false));
+
+                    case 6:
+
+                        done(null, user);
+                        _context.next = 12;
+                        break;
+
+                    case 9:
+                        _context.prev = 9;
+                        _context.t0 = _context['catch'](0);
+
+                        done(_context.t0, false);
+
+                    case 12:
+                    case 'end':
+                        return _context.stop();
+                }
+            }
+        }, _callee, undefined, [[0, 9]]);
+    }));
+
+    return function (_x, _x2) {
+        return _ref.apply(this, arguments);
+    };
+}()));
+
+_passport2.default.use(new _passportLocal.Strategy({}, function () {
+    var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(username, password, done) {
+        var user, result;
+        return regeneratorRuntime.wrap(function _callee2$(_context2) {
+            while (1) {
+                switch (_context2.prev = _context2.next) {
+                    case 0:
+                        _context2.prev = 0;
+                        _context2.next = 3;
+                        return _user2.default.findOne({ username: username });
+
+                    case 3:
+                        user = _context2.sent;
+
+                        if (user) {
+                            _context2.next = 6;
+                            break;
+                        }
+
+                        return _context2.abrupt('return', done(null, false));
+
+                    case 6:
+                        _context2.next = 8;
+                        return user.validatePassword(password);
+
+                    case 8:
+                        result = _context2.sent;
+
+                        if (result) {
+                            _context2.next = 11;
+                            break;
+                        }
+
+                        return _context2.abrupt('return', done(null, false));
+
+                    case 11:
+
+                        done(null, user);
+                        _context2.next = 17;
+                        break;
+
+                    case 14:
+                        _context2.prev = 14;
+                        _context2.t0 = _context2['catch'](0);
+
+                        done(_context2.t0, false);
+
+                    case 17:
+                    case 'end':
+                        return _context2.stop();
+                }
+            }
+        }, _callee2, undefined, [[0, 14]]);
+    }));
+
+    return function (_x3, _x4, _x5) {
+        return _ref2.apply(this, arguments);
+    };
+}()));
 
 /***/ }),
 /* 15 */
 /***/ (function(module, exports) {
 
-eval("module.exports = require(\"passport-jwt\");\n\n//////////////////\n// WEBPACK FOOTER\n// external \"passport-jwt\"\n// module id = 15\n// module chunks = 0\n\n//# sourceURL=webpack:///external_%22passport-jwt%22?");
+module.exports = require("passport-jwt");
 
 /***/ }),
 /* 16 */
 /***/ (function(module, exports) {
 
-eval("module.exports = require(\"passport-local\");\n\n//////////////////\n// WEBPACK FOOTER\n// external \"passport-local\"\n// module id = 16\n// module chunks = 0\n\n//# sourceURL=webpack:///external_%22passport-local%22?");
+module.exports = require("passport-local");
 
 /***/ }),
 /* 17 */
 /***/ (function(module, exports) {
 
-eval("module.exports = require(\"express-promise-router\");\n\n//////////////////\n// WEBPACK FOOTER\n// external \"express-promise-router\"\n// module id = 17\n// module chunks = 0\n\n//# sourceURL=webpack:///external_%22express-promise-router%22?");
+module.exports = require("express-promise-router");
 
 /***/ }),
 /* 18 */
 /***/ (function(module, exports) {
 
-eval("module.exports = require(\"morgan\");\n\n//////////////////\n// WEBPACK FOOTER\n// external \"morgan\"\n// module id = 18\n// module chunks = 0\n\n//# sourceURL=webpack:///external_%22morgan%22?");
+module.exports = require("morgan");
 
 /***/ }),
 /* 19 */
 /***/ (function(module, exports) {
 
-eval("module.exports = require(\"body-parser\");\n\n//////////////////\n// WEBPACK FOOTER\n// external \"body-parser\"\n// module id = 19\n// module chunks = 0\n\n//# sourceURL=webpack:///external_%22body-parser%22?");
+module.exports = require("body-parser");
 
 /***/ }),
 /* 20 */
 /***/ (function(module, exports) {
 
-eval("module.exports = require(\"cors\");\n\n//////////////////\n// WEBPACK FOOTER\n// external \"cors\"\n// module id = 20\n// module chunks = 0\n\n//# sourceURL=webpack:///external_%22cors%22?");
+module.exports = require("cors");
 
 /***/ }),
 /* 21 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-"use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", {\n    value: true\n});\n\nvar _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (\"value\" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();\n\nfunction _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }\n\nfunction _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError(\"Cannot call a class as a function\"); } }\n\nvar users = [];\nvar sockets = {};\nvar io = null;\n\nfunction generateUsersArray() {\n    return users.map(function (user) {\n        return Object.values(user)[0];\n    });\n}\n\nvar Chat = function () {\n    function Chat(socketio) {\n        _classCallCheck(this, Chat);\n\n        io = socketio;\n\n        this.onConnection = this.onConnection.bind(this);\n\n        io.on('connection', this.onConnection);\n    }\n\n    _createClass(Chat, [{\n        key: 'onConnection',\n        value: function onConnection(socket) {\n            console.log('CONNECTION');\n\n            socket.on('new user', this.onNewUser);\n            socket.on('disconnect', this.onDisconnect);\n            socket.on('message', this.onMessage);\n        }\n    }, {\n        key: 'onMessage',\n        value: function onMessage(data) {\n            console.log('MESSAGE');\n            console.log(data);\n\n            data.message.trim();\n\n            if (data.message.substr(0, 3) === '/w ') {\n                var msg = data.message.substr(3);\n\n                if (msg.indexOf(' ') !== -1) {\n                    var recipient = msg.substr(0, msg.indexOf(' '));\n                    var message = msg.substr(msg.indexOf(' ') + 1);\n\n                    data.message = message;\n                    console.log('EMITTING PM');\n                    sockets[recipient].emit('message', data);\n                } else {\n                    // TODO:\n                }\n            } else {\n                // Save to db\n                io.sockets.emit('message', data);\n            }\n        }\n    }, {\n        key: 'onNewUser',\n        value: function onNewUser(user) {\n            console.log('NEW USER');\n            this.username = user.username;\n            users.push(_defineProperty({}, user.username, user));\n            sockets[user.username] = this;\n            io.sockets.emit('update usernames', generateUsersArray.call(this));\n            console.log('Users: ', users);\n            console.log('Sockets nr:', Object.keys(sockets).length);\n        }\n    }, {\n        key: 'onDisconnect',\n        value: function onDisconnect() {\n            var _this = this;\n\n            console.log('DISCONNECT');\n            users = users.filter(function (user) {\n                return Object.keys(user)[0] !== _this.username;\n                // return Object.keys(user)[0] !== this.id;\n            });\n            delete sockets[this.username];\n            io.sockets.emit('update usernames', generateUsersArray.call(this));\n            console.log('Users', users);\n            console.log('Sockets nr:', Object.keys(sockets).length);\n        }\n    }]);\n\n    return Chat;\n}();\n\nexports.default = Chat;\n\n//////////////////\n// WEBPACK FOOTER\n// ./src/chat/index.js\n// module id = 21\n// module chunks = 0\n\n//# sourceURL=webpack:///./src/chat/index.js?");
+module.exports = require("chalk");
 
 /***/ }),
 /* 22 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-eval("module.exports = require(\"http\");\n\n//////////////////\n// WEBPACK FOOTER\n// external \"http\"\n// module id = 22\n// module chunks = 0\n\n//# sourceURL=webpack:///external_%22http%22?");
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var users = [];
+var sockets = {};
+var io = null;
+
+function generateUsersArray() {
+    return users.map(function (user) {
+        return Object.values(user)[0];
+    });
+}
+
+var Chat = function () {
+    function Chat(socketio) {
+        _classCallCheck(this, Chat);
+
+        io = socketio;
+
+        this.onConnection = this.onConnection.bind(this);
+
+        io.on('connection', this.onConnection);
+    }
+
+    _createClass(Chat, [{
+        key: 'onConnection',
+        value: function onConnection(socket) {
+            console.log('CONNECTION');
+
+            socket.on('new user', this.onNewUser);
+            socket.on('disconnect', this.onDisconnect);
+            socket.on('message', this.onMessage);
+        }
+    }, {
+        key: 'onMessage',
+        value: function onMessage(data) {
+            console.log('MESSAGE');
+            console.log(data);
+
+            data.message.trim();
+
+            if (data.message.substr(0, 3) === '/w ') {
+                var msg = data.message.substr(3);
+
+                if (msg.indexOf(' ') !== -1) {
+                    var recipient = msg.substr(0, msg.indexOf(' '));
+                    var message = msg.substr(msg.indexOf(' ') + 1);
+
+                    data.message = message;
+                    console.log('EMITTING PM');
+                    sockets[recipient].emit('message', data);
+                } else {
+                    // TODO:
+                }
+            } else {
+                // Save to db
+
+                io.sockets.emit('message', data);
+            }
+        }
+    }, {
+        key: 'onNewUser',
+        value: function onNewUser(user) {
+            console.log('NEW USER');
+            this.username = user.username;
+            users.push(_defineProperty({}, user.username, user));
+            sockets[user.username] = this;
+            io.sockets.emit('update usernames', generateUsersArray.call(this));
+            console.log('Users: ', users);
+            console.log('Sockets nr:', Object.keys(sockets).length);
+        }
+    }, {
+        key: 'onDisconnect',
+        value: function onDisconnect() {
+            var _this = this;
+
+            console.log('DISCONNECT');
+            users = users.filter(function (user) {
+                return Object.keys(user)[0] !== _this.username;
+                // return Object.keys(user)[0] !== this.id;
+            });
+            delete sockets[this.username];
+            io.sockets.emit('update usernames', generateUsersArray.call(this));
+            console.log('Users', users);
+            console.log('Sockets nr:', Object.keys(sockets).length);
+        }
+    }]);
+
+    return Chat;
+}();
+
+exports.default = Chat;
 
 /***/ }),
 /* 23 */
 /***/ (function(module, exports) {
 
-eval("module.exports = require(\"socket.io\");\n\n//////////////////\n// WEBPACK FOOTER\n// external \"socket.io\"\n// module id = 23\n// module chunks = 0\n\n//# sourceURL=webpack:///external_%22socket.io%22?");
+module.exports = require("http");
+
+/***/ }),
+/* 24 */
+/***/ (function(module, exports) {
+
+module.exports = require("socket.io");
 
 /***/ })
 /******/ ]);

@@ -20,9 +20,9 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">40% </span>
+        <span class="strong">0% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>4/10</span>
+        <span class='fraction'>0/7</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">100% </span>
@@ -30,14 +30,14 @@
         <span class='fraction'>0/0</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">20% </span>
+        <span class="strong">0% </span>
         <span class="quiet">Functions</span>
-        <span class='fraction'>1/5</span>
+        <span class='fraction'>0/4</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">40% </span>
+        <span class="strong">0% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>4/10</span>
+        <span class='fraction'>0/7</span>
       </div>
     </div>
   </div>
@@ -88,45 +88,7 @@
 43
 44
 45
-46
-47
-48
-49
-50
-51
-52
-53
-54
-55
-56
-57
-58
-59
-60
-61
-62</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+46</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -138,9 +100,15 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -171,37 +139,21 @@ import { JWT_SECRET } from '../constants';
 &nbsp;
 export default class User {
     /**
-     * @param  {obj} req A request object
-     */
-    constructor(req) {
-        const { email, username, password } = req.value.body;
-&nbsp;
-        this.email = email;
-        this.username = username;
-        this.password = password;
-    }
-&nbsp;
-    /**
      * Goes to database and searches for users
      * @return {obj} An object containing user
      */
-<span class="fstat-no" title="function not covered" >    as</span>ync getUser() {
-<span class="cstat-no" title="statement not covered" >        return await UserModel.findOne({</span>
-            email: this.email,
-            username: this.username
-        });
+<span class="fstat-no" title="function not covered" >    as</span>ync getUser(fields) {
+        const { email } = <span class="cstat-no" title="statement not covered" >fields;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        return await UserModel.findOne({email});</span>
     }
 &nbsp;
     /**
      * Saves user to database
      * @return {str} Token
      */
-<span class="fstat-no" title="function not covered" >    as</span>ync registerUser() {
-        const newUser = <span class="cstat-no" title="statement not covered" >new UserModel({</span>
-            email: this.email,
-            username: this.username,
-            password: this.password
-        });
+<span class="fstat-no" title="function not covered" >    as</span>ync registerUser(fields) {
+        const newUser = <span class="cstat-no" title="statement not covered" >new UserModel(fields);</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >        await newUser.save();</span>
 <span class="cstat-no" title="statement not covered" >        return User.signToken(newUser);</span>
@@ -232,7 +184,7 @@ export default class User {
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Fri Nov 24 2017 05:26:52 GMT+0100 (CET)
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Tue Jan 16 2018 17:06:23 GMT+0000 (UTC)
 </div>
 </div>
 <script src="../../prettify.js"></script>
