@@ -259,9 +259,9 @@ var _chalk = __webpack_require__(21);
 
 var _chalk2 = _interopRequireDefault(_chalk);
 
-var _index = __webpack_require__(22);
+var _socketioChatServer = __webpack_require__(25);
 
-var _index2 = _interopRequireDefault(_index);
+var _socketioChatServer2 = _interopRequireDefault(_socketioChatServer);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -306,7 +306,7 @@ app.use('/user', _user2.default);
 
 var server = __webpack_require__(23).Server(app);
 
-new _index2.default(server);
+new _socketioChatServer2.default(server);
 
 // Start API
 server.listen(port, function () {
@@ -926,117 +926,7 @@ module.exports = require("cors");
 module.exports = require("chalk");
 
 /***/ }),
-/* 22 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _socket = __webpack_require__(24);
-
-var _socket2 = _interopRequireDefault(_socket);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Chat = function () {
-    function Chat(server) {
-        _classCallCheck(this, Chat);
-
-        this.io = (0, _socket2.default)(server);
-        this.sockets = {};
-        this.users = [];
-        // todo
-
-        this.onConnection = this.onConnection.bind(this);
-
-        this.io.on('connection', this.onConnection);
-    }
-
-    _createClass(Chat, [{
-        key: 'onConnection',
-        value: function onConnection(socket) {
-            console.log('CONNECTION');
-
-            socket.on('new user', this.onNewUser.bind(this, socket));
-            socket.on('disconnect', this.onDisconnect.bind(this, socket));
-            socket.on('message', this.onMessage.bind(this));
-        }
-    }, {
-        key: 'onMessage',
-        value: function onMessage(data) {
-            console.log('MESSAGE');
-            console.log(data);
-
-            data.message.trim();
-
-            if (data.message.substr(0, 3) === '/w ') {
-                var msg = data.message.substr(3);
-
-                if (msg.indexOf(' ') !== -1) {
-                    var recipient = msg.substr(0, msg.indexOf(' '));
-                    var message = msg.substr(msg.indexOf(' ') + 1);
-
-                    data.message = message;
-                    console.log('EMITTING PM');
-                    this.sockets[recipient].emit('message', data);
-                } else {
-                    // TODO:
-                }
-            } else {
-                // Save to db
-
-                this.io.sockets.emit('message', data);
-            }
-        }
-    }, {
-        key: 'onNewUser',
-        value: function onNewUser(socket, user) {
-            // console.log(arguments);
-            console.log('NEW USER');
-            socket.username = user.username;
-            this.users.push(_defineProperty({}, user.username, user));
-            this.sockets[user.username] = socket;
-            this.io.sockets.emit('update usernames', this._generateUsersArray());
-            console.log('Users: ', this.users);
-            console.log('Sockets nr:', Object.keys(this.sockets).length);
-        }
-    }, {
-        key: 'onDisconnect',
-        value: function onDisconnect(socket) {
-            console.log('DISCONNECT');
-            this.users = this.users.filter(function (user) {
-                return Object.keys(user)[0] !== socket.username;
-            });
-            delete this.sockets[this.username];
-            this.io.sockets.emit('update usernames', this._generateUsersArray());
-            console.log('Users', this.users);
-            console.log('Sockets nr:', Object.keys(this.sockets).length);
-        }
-    }, {
-        key: '_generateUsersArray',
-        value: function _generateUsersArray() {
-            return this.users.map(function (user) {
-                return Object.values(user)[0];
-            });
-        }
-    }]);
-
-    return Chat;
-}();
-
-exports.default = Chat;
-
-/***/ }),
+/* 22 */,
 /* 23 */
 /***/ (function(module, exports) {
 
@@ -1047,6 +937,88 @@ module.exports = require("http");
 /***/ (function(module, exports) {
 
 module.exports = require("socket.io");
+
+/***/ }),
+/* 25 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var socketio = __webpack_require__(24);
+
+class Chat {
+    constructor(server) {
+        this.io = socketio(server);
+        this.sockets = {};
+        this.users = [];
+        // todo
+
+        this.onConnection = this.onConnection.bind(this);
+
+        this.io.on('connection', this.onConnection);
+    }
+
+    onConnection(socket) {
+        console.log('CONNECTION');
+
+        socket.on('new user', this.onNewUser.bind(this, socket));
+        socket.on('disconnect', this.onDisconnect.bind(this, socket));
+        socket.on('message', this.onMessage.bind(this));
+    }
+
+    onMessage(data) {
+        console.log('MESSAGE');
+        console.log(data);
+
+        data.message.trim();
+
+        if (data.message.substr(0, 3) === '/w ') {
+            let msg = data.message.substr(3);
+
+            if (msg.indexOf(' ') !== -1) {
+                let recipient = msg.substr(0, msg.indexOf(' '));
+                let message = msg.substr(msg.indexOf(' ') + 1);
+
+                data.message = message;
+                console.log('EMITTING PM');
+                this.sockets[recipient].emit('message', data);
+            } else {
+                // TODO:
+            }
+        } else {
+            // Save to db
+
+            this.io.sockets.emit('message', data);
+        }
+    }
+
+    onNewUser(socket, user) {
+        // console.log(arguments);
+        console.log('NEW USER');
+        socket.username = user.username;
+        this.users.push({ [user.username]: user });
+        this.sockets[user.username] = socket;
+        this.io.sockets.emit('update usernames', this._generateUsersArray());
+        console.log('Users: ', this.users);
+        console.log('Sockets nr:', Object.keys(this.sockets).length);
+    }
+
+    onDisconnect(socket) {
+        console.log('DISCONNECT');
+        this.users = this.users.filter(user => {
+            return Object.keys(user)[0] !== socket.username;
+        });
+        delete this.sockets[this.username];
+        this.io.sockets.emit('update usernames', this._generateUsersArray());
+        console.log('Users', this.users);
+        console.log('Sockets nr:', Object.keys(this.sockets).length);
+    }
+
+    _generateUsersArray() {
+        return this.users.map(user => Object.values(user)[0]);
+    }
+}
+
+module.exports = Chat;
+
 
 /***/ })
 /******/ ]);

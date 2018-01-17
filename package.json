@@ -56,7 +56,8 @@
         "passport": "^0.4.0",
         "passport-jwt": "^3.0.1",
         "passport-local": "^1.0.0",
-        "socket.io": "^2.0.4"
+        "socket.io": "^2.0.4",
+        "socketio-chat-server": "^1.0.0"
     },
     "homepage": "https://github.com/alevor657/chat-server#readme"
 }
