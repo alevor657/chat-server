@@ -305,9 +305,8 @@ app.use((0, _cors2.default)());
 app.use('/user', _user2.default);
 
 var server = __webpack_require__(23).Server(app);
-var io = __webpack_require__(24)(server);
 
-new _index2.default(io);
+new _index2.default(server);
 
 // Start API
 server.listen(port, function () {
@@ -939,29 +938,28 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _socket = __webpack_require__(24);
+
+var _socket2 = _interopRequireDefault(_socket);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var users = [];
-var sockets = {};
-var io = null;
-
-function generateUsersArray() {
-    return users.map(function (user) {
-        return Object.values(user)[0];
-    });
-}
-
 var Chat = function () {
-    function Chat(socketio) {
+    function Chat(server) {
         _classCallCheck(this, Chat);
 
-        io = socketio;
+        this.io = (0, _socket2.default)(server);
+        this.sockets = {};
+        this.users = [];
+        // todo
 
         this.onConnection = this.onConnection.bind(this);
 
-        io.on('connection', this.onConnection);
+        this.io.on('connection', this.onConnection);
     }
 
     _createClass(Chat, [{
@@ -969,9 +967,9 @@ var Chat = function () {
         value: function onConnection(socket) {
             console.log('CONNECTION');
 
-            socket.on('new user', this.onNewUser);
-            socket.on('disconnect', this.onDisconnect);
-            socket.on('message', this.onMessage);
+            socket.on('new user', this.onNewUser.bind(this, socket));
+            socket.on('disconnect', this.onDisconnect.bind(this, socket));
+            socket.on('message', this.onMessage.bind(this));
         }
     }, {
         key: 'onMessage',
@@ -990,41 +988,46 @@ var Chat = function () {
 
                     data.message = message;
                     console.log('EMITTING PM');
-                    sockets[recipient].emit('message', data);
+                    this.sockets[recipient].emit('message', data);
                 } else {
                     // TODO:
                 }
             } else {
                 // Save to db
 
-                io.sockets.emit('message', data);
+                this.io.sockets.emit('message', data);
             }
         }
     }, {
         key: 'onNewUser',
-        value: function onNewUser(user) {
+        value: function onNewUser(socket, user) {
+            // console.log(arguments);
             console.log('NEW USER');
-            this.username = user.username;
-            users.push(_defineProperty({}, user.username, user));
-            sockets[user.username] = this;
-            io.sockets.emit('update usernames', generateUsersArray.call(this));
-            console.log('Users: ', users);
-            console.log('Sockets nr:', Object.keys(sockets).length);
+            socket.username = user.username;
+            this.users.push(_defineProperty({}, user.username, user));
+            this.sockets[user.username] = socket;
+            this.io.sockets.emit('update usernames', this._generateUsersArray());
+            console.log('Users: ', this.users);
+            console.log('Sockets nr:', Object.keys(this.sockets).length);
         }
     }, {
         key: 'onDisconnect',
-        value: function onDisconnect() {
-            var _this = this;
-
+        value: function onDisconnect(socket) {
             console.log('DISCONNECT');
-            users = users.filter(function (user) {
-                return Object.keys(user)[0] !== _this.username;
-                // return Object.keys(user)[0] !== this.id;
+            this.users = this.users.filter(function (user) {
+                return Object.keys(user)[0] !== socket.username;
             });
-            delete sockets[this.username];
-            io.sockets.emit('update usernames', generateUsersArray.call(this));
-            console.log('Users', users);
-            console.log('Sockets nr:', Object.keys(sockets).length);
+            delete this.sockets[this.username];
+            this.io.sockets.emit('update usernames', this._generateUsersArray());
+            console.log('Users', this.users);
+            console.log('Sockets nr:', Object.keys(this.sockets).length);
+        }
+    }, {
+        key: '_generateUsersArray',
+        value: function _generateUsersArray() {
+            return this.users.map(function (user) {
+                return Object.values(user)[0];
+            });
         }
     }]);
 

@@ -51,9 +51,8 @@ app.use(cors());
 app.use('/user', user);
 
 let server = require('http').Server(app);
-let io = require('socket.io')(server);
 
-new Chat(io);
+new Chat(server);
 
 // Start API
 server.listen(

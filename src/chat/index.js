@@ -1,26 +1,23 @@
-let users = [];
-let sockets = {};
-let io = null;
-
-function generateUsersArray() {
-    return users.map(user => Object.values(user)[0]);
-}
+import socketio from 'socket.io';
 
 class Chat {
-    constructor(socketio) {
-        io = socketio;
+    constructor(server) {
+        this.io = socketio(server);
+        this.sockets = {};
+        this.users = [];
+        // todo
 
         this.onConnection = this.onConnection.bind(this);
 
-        io.on('connection', this.onConnection);
+        this.io.on('connection', this.onConnection);
     }
 
     onConnection(socket) {
         console.log('CONNECTION');
 
-        socket.on('new user', this.onNewUser);
-        socket.on('disconnect', this.onDisconnect);
-        socket.on('message', this.onMessage);
+        socket.on('new user', this.onNewUser.bind(this, socket));
+        socket.on('disconnect', this.onDisconnect.bind(this, socket));
+        socket.on('message', this.onMessage.bind(this));
     }
 
     onMessage(data) {
@@ -38,37 +35,41 @@ class Chat {
 
                 data.message = message;
                 console.log('EMITTING PM');
-                sockets[recipient].emit('message', data);
+                this.sockets[recipient].emit('message', data);
             } else {
                 // TODO:
             }
         } else {
             // Save to db
 
-            io.sockets.emit('message', data);
+            this.io.sockets.emit('message', data);
         }
     }
 
-    onNewUser(user) {
+    onNewUser(socket, user) {
+        // console.log(arguments);
         console.log('NEW USER');
-        this.username = user.username;
-        users.push({[user.username]: user});
-        sockets[user.username] = this;
-        io.sockets.emit('update usernames', generateUsersArray.call(this));
-        console.log('Users: ', users);
-        console.log('Sockets nr:', Object.keys(sockets).length);
+        socket.username = user.username;
+        this.users.push({[user.username]: user});
+        this.sockets[user.username] = socket;
+        this.io.sockets.emit('update usernames', this._generateUsersArray());
+        console.log('Users: ', this.users);
+        console.log('Sockets nr:', Object.keys(this.sockets).length);
     }
 
-    onDisconnect() {
+    onDisconnect(socket) {
         console.log('DISCONNECT');
-        users = users.filter(user => {
-            return Object.keys(user)[0] !== this.username;
-            // return Object.keys(user)[0] !== this.id;
+        this.users = this.users.filter(user => {
+            return Object.keys(user)[0] !== socket.username;
         });
-        delete sockets[this.username];
-        io.sockets.emit('update usernames', generateUsersArray.call(this));
-        console.log('Users', users);
-        console.log('Sockets nr:', Object.keys(sockets).length);
+        delete this.sockets[this.username];
+        this.io.sockets.emit('update usernames', this._generateUsersArray());
+        console.log('Users', this.users);
+        console.log('Sockets nr:', Object.keys(this.sockets).length);
+    }
+
+    _generateUsersArray() {
+        return this.users.map(user => Object.values(user)[0]);
     }
 }
 
