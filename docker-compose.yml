@@ -47,5 +47,5 @@ services:
 
         ports:
             - "8086:8086"
-        command: 
+        command:
             "npm start"

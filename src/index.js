@@ -52,14 +52,12 @@ app.use('/user', user);
 
 let server = require('http').Server(app);
 
-new Chat(server);
-
 // Start API
 server.listen(
     port,
     () => console.log(chalk.green.bold(`App is listening on http://localhost:${port}`))
 );
 
-
+new Chat(server);
 
 export default server;
