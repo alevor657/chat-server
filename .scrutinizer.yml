@@ -15,7 +15,7 @@ filter:
         - "__tests__"
         - "__mocks__"
         - "coverage"
-        - "dist"
+        - "dist/*"
         - "docker"
         - "node_modules"
 
