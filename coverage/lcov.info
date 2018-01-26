@@ -1,5 +1,5 @@
 TN:
-SF:/app/src/index.js
+SF:/home/yooo/dbwebb-kurser/ramverk2/me/app/server/src/index.js
 FN:13,(anonymous_0)
 FN:22,(anonymous_1)
 FN:58,(anonymous_2)
@@ -41,12 +41,12 @@ BRDA:14,1,1,1
 BRDA:23,2,0,0
 BRDA:23,2,1,0
 BRDA:41,3,0,1
-BRDA:41,3,1,0
+BRDA:41,3,1,1
 BRF:8
-BRH:3
+BRH:4
 end_of_record
 TN:
-SF:/app/src/api/constants.js
+SF:/home/yooo/dbwebb-kurser/ramverk2/me/app/server/src/api/constants.js
 FNF:0
 FNH:0
 DA:1,2
@@ -62,7 +62,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:/app/src/api/passport.js
+SF:/home/yooo/dbwebb-kurser/ramverk2/me/app/server/src/api/passport.js
 FN:11,(anonymous_0)
 FN:25,(anonymous_1)
 FNF:2
@@ -98,7 +98,7 @@ BRF:6
 BRH:3
 end_of_record
 TN:
-SF:/app/src/api/controllers/user.js
+SF:/home/yooo/dbwebb-kurser/ramverk2/me/app/server/src/api/controllers/user.js
 FN:3,(anonymous_0)
 FN:22,(anonymous_1)
 FN:33,(anonymous_2)
@@ -135,7 +135,7 @@ BRF:2
 BRH:2
 end_of_record
 TN:
-SF:/app/src/api/db/models/user.js
+SF:/home/yooo/dbwebb-kurser/ramverk2/me/app/server/src/api/db/models/user.js
 FN:25,(anonymous_0)
 FN:37,(anonymous_1)
 FNF:2
@@ -161,7 +161,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:/app/src/api/models/User.js
+SF:/home/yooo/dbwebb-kurser/ramverk2/me/app/server/src/api/models/User.js
 FN:10,(anonymous_0)
 FN:20,(anonymous_1)
 FN:32,(anonymous_2)
@@ -185,7 +185,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:/app/src/api/routes/user.js
+SF:/home/yooo/dbwebb-kurser/ramverk2/me/app/server/src/api/routes/user.js
 FNF:0
 FNH:0
 DA:6,1
@@ -201,7 +201,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:/app/src/api/validation/postValidation.js
+SF:/home/yooo/dbwebb-kurser/ramverk2/me/app/server/src/api/validation/postValidation.js
 FN:4,(anonymous_0)
 FN:5,(anonymous_1)
 FNF:2

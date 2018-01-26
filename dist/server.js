@@ -266,7 +266,7 @@ var _socketioChatServer2 = _interopRequireDefault(_socketioChatServer);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 if (process.env.MONGO_TEST_DB) {
-    _mongoose2.default.connect('mongodb://tester:tester@80.78.218.152:27017/chatAPI', function (err) {
+    _mongoose2.default.connect('mongodb://tester:tester@80.78.218.120:27017/chatAPI', function (err) {
         if (err) {
             console.log(_chalk2.default.yellow.bgRed.bold('Could not connect to test database'));
             process.exit(2);

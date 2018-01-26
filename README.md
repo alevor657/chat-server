@@ -91,7 +91,7 @@ You will also need mongod daemon started.
 
     sudo servide mongod start
 
-However the server is already up and running [here](http://80.78.218.152:1344)
+However the server is already up and running [here](http://80.78.218.120:1344)
 
 You can try it out in Postman. I describe the API over [here](#api)
 
