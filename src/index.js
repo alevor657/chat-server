@@ -6,8 +6,7 @@ import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import chalk from 'chalk';
-
-import Chat from 'socketio-chat-server';
+import Chat from './ws';
 
 if (process.env.MONGO_TEST_DB) {
     mongoose.connect('mongodb://tester:tester@80.78.218.120:27017/chatAPI', function (err) {

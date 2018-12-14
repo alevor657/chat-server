@@ -4,9 +4,11 @@
     "description": "A chat server",
     "main": "dist/index.js",
     "scripts": {
+        "debug": "node --inspect dist/server.js",
         "webpack": "webpack",
         "start-dev": "nodemon dist/server.js",
         "start": "node dist/server.js",
+        "start-db": "docker-compose up -d mongo",
         "test": "export MONGO_TEST_DB=1; npm run eslint && npm run jest",
         "eslint": "eslint .",
         "jest": "jest --coverage --forceExit",
@@ -56,7 +58,7 @@
         "passport": "^0.4.0",
         "passport-jwt": "^3.0.1",
         "passport-local": "^1.0.0",
-        "socket.io": "^2.0.4",
+        "socket.io": "^1.7.4",
         "socketio-chat-server": "^1.0.0"
     },
     "homepage": "https://github.com/alevor657/chat-server#readme"
