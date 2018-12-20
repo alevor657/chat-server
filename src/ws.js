@@ -1,16 +1,35 @@
 var socketio = require('socket.io');
 
+// Constants. Move to a different file
+const ERR_ROOM_EXISTS = "ERR_ROOM_EXISTS";
+
 function Chat(server, params = {}) {
     this.io = socketio(server, params);
     this.sockets = {};
     this.users = [];
     this.rooms = [];
 
-    this.onNewRoom = roomName => {
+    this.onNewRoom = (roomName, socket) => {
         console.log('NEW ROOM', roomName);
+
+        if (this.rooms.includes(roomName)) {
+            console.log('ERR ROOM EXISTS', roomName);
+            socket.emit(ERR_ROOM_EXISTS);
+            return;
+        }
 
         this.rooms.push(roomName);
         this.io.sockets.emit("rooms", JSON.stringify(this.rooms));
+    };
+
+    this.onDeleteRoom = (roomName, socket) => {
+        console.log('DELETE ROOM', roomName);
+
+        this.rooms = this.rooms.filter((item) => {
+            return item !== roomName;
+        });
+
+        socket.emit('rooms', JSON.stringify(this.rooms));
     };
 
     this.onMessage = (data) => {
@@ -63,7 +82,7 @@ function Chat(server, params = {}) {
     };
 
     this.onGetRooms = socket => {
-        console.log('ON GET ROOMS');
+        console.log('ON GET ROOMS', this.rooms);
 
         socket.emit('rooms', JSON.stringify(this.rooms));
     };
@@ -75,11 +94,14 @@ function Chat(server, params = {}) {
     this.onConnection = socket => {
         console.log('CONNECTION');
 
+        socket.emit('rooms', JSON.stringify(this.rooms));
+
         socket.on('new user', this.onNewUser);
         socket.on('disconnect', this.onDisconnect);
         socket.on('message', this.onMessage);
-        socket.on('get rooms', roomName => this.onGetRooms.bind(this, roomName));
-        socket.on('new room', this.onNewRoom);
+        socket.on('get rooms', this.onGetRooms.bind(this, socket));
+        socket.on('delete room', roomName => this.onDeleteRoom.call(this, roomName, socket));
+        socket.on('new room', roomName => this.onNewRoom.call(this, roomName, socket));
     };
 
     this.io.on('connection', this.onConnection);

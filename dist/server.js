@@ -936,6 +936,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 var socketio = __webpack_require__(23);
 
+// Constants. Move to a different file
+var ERR_ROOM_EXISTS = "ERR_ROOM_EXISTS";
+
 function Chat(server) {
     var _this = this;
 
@@ -946,11 +949,27 @@ function Chat(server) {
     this.users = [];
     this.rooms = [];
 
-    this.onNewRoom = function (roomName) {
+    this.onNewRoom = function (roomName, socket) {
         console.log('NEW ROOM', roomName);
+
+        if (_this.rooms.includes(roomName)) {
+            console.log('ERR ROOM EXISTS', roomName);
+            socket.emit(ERR_ROOM_EXISTS);
+            return;
+        }
 
         _this.rooms.push(roomName);
         _this.io.sockets.emit("rooms", JSON.stringify(_this.rooms));
+    };
+
+    this.onDeleteRoom = function (roomName, socket) {
+        console.log('DELETE ROOM', roomName);
+
+        _this.rooms = _this.rooms.filter(function (item) {
+            return item !== roomName;
+        });
+
+        socket.emit('rooms', JSON.stringify(_this.rooms));
     };
 
     this.onMessage = function (data) {
@@ -1003,7 +1022,7 @@ function Chat(server) {
     };
 
     this.onGetRooms = function (socket) {
-        console.log('ON GET ROOMS');
+        console.log('ON GET ROOMS', _this.rooms);
 
         socket.emit('rooms', JSON.stringify(_this.rooms));
     };
@@ -1017,13 +1036,18 @@ function Chat(server) {
     this.onConnection = function (socket) {
         console.log('CONNECTION');
 
+        socket.emit('rooms', JSON.stringify(_this.rooms));
+
         socket.on('new user', _this.onNewUser);
         socket.on('disconnect', _this.onDisconnect);
         socket.on('message', _this.onMessage);
-        socket.on('get rooms', function (roomName) {
-            return _this.onGetRooms.bind(_this, roomName);
+        socket.on('get rooms', _this.onGetRooms.bind(_this, socket));
+        socket.on('delete room', function (roomName) {
+            return _this.onDeleteRoom.call(_this, roomName, socket);
         });
-        socket.on('new room', _this.onNewRoom);
+        socket.on('new room', function (roomName) {
+            return _this.onNewRoom.call(_this, roomName, socket);
+        });
     };
 
     this.io.on('connection', this.onConnection);
