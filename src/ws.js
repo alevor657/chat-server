@@ -1,39 +1,19 @@
 var socketio = require('socket.io');
 
-class Chat {
-    constructor(server) {
-        this.io = socketio(server);
+function Chat(server, params = {}) {
+    this.io = socketio(server, params);
+    this.sockets = {};
+    this.users = [];
+    this.rooms = [];
 
-        this.sockets = {};
-        this.users = [];
-        this.rooms = [];
+    this.onNewRoom = roomName => {
+        console.log('NEW ROOM', roomName);
 
-        this.onConnection = this.onConnection.bind(this);
+        this.rooms.push(roomName);
+        this.io.sockets.emit("rooms", JSON.stringify(this.rooms));
+    };
 
-        this.io.on('connection', this.onConnection);
-    }
-
-    onConnection(socket) {
-        console.log('CONNECTION');
-
-        socket.on('new user', this.onNewUser.bind(this, socket));
-        socket.on('disconnect', this.onDisconnect.bind(this, socket));
-        socket.on('message', this.onMessage.bind(this));
-        socket.on('get rooms', this.onGetRooms.bind(this, socket));
-        socket.on('new room', this.onNewRoom.bind(this));
-    }
-
-    onNewRoom(data) {
-        console.log('NEW ROOM', data);
-    }
-
-    onGetRooms(socket) {
-        console.log('GET ROOMS');
-
-        socket.emit('rooms', JSON.stringify(this.rooms));
-    }
-
-    onMessage(data) {
+    this.onMessage = (data) => {
         console.log('MESSAGE');
         console.log(data);
 
@@ -57,33 +37,54 @@ class Chat {
 
             this.io.sockets.emit('message', data);
         }
-    }
+    };
 
-    onNewUser(socket, user) {
-        // console.log(arguments);
+    this.onNewUser = (socket, user) => {
         console.log('NEW USER');
+
         socket.username = user.username;
         this.users.push({ [user.username]: user });
         this.sockets[user.username] = socket;
         this.io.sockets.emit('update usernames', this._generateUsersArray());
         console.log('Users: ', this.users);
         console.log('Sockets nr:', Object.keys(this.sockets).length);
-    }
+    };
 
-    onDisconnect(socket) {
+    this.onDisconnect = (socket) => {
         console.log('DISCONNECT');
+
         this.users = this.users.filter(user => {
             return Object.keys(user)[0] !== socket.username;
         });
         delete this.sockets[this.username];
-        this.io.sockets.emit('update usernames', this._generateUsersArray());
+        this.io.sockets.emit('update usernames', this.generateUsersArray());
         console.log('Users', this.users);
         console.log('Sockets nr:', Object.keys(this.sockets).length);
-    }
+    };
 
-    _generateUsersArray() {
+    this.onGetRooms = socket => {
+        console.log('ON GET ROOMS');
+
+        socket.emit('rooms', JSON.stringify(this.rooms));
+    };
+
+    this.generateUsersArray = () => {
         return this.users.map(user => Object.values(user)[0]);
-    }
+    };
+
+    this.onConnection = socket => {
+        console.log('CONNECTION');
+
+        socket.on('new user', this.onNewUser);
+        socket.on('disconnect', this.onDisconnect);
+        socket.on('message', this.onMessage);
+        socket.on('get rooms', roomName => this.onGetRooms.bind(this, roomName));
+        socket.on('new room', this.onNewRoom);
+    };
+
+    this.io.on('connection', this.onConnection);
+
+    return server;
 }
 
 module.exports = Chat;

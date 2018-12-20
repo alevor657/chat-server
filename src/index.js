@@ -6,7 +6,7 @@ import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import chalk from 'chalk';
-import Chat from './ws';
+import attachChat from './ws';
 
 if (process.env.MONGO_TEST_DB) {
     mongoose.connect('mongodb://tester:tester@80.78.218.120:27017/chatAPI', function (err) {
@@ -57,6 +57,6 @@ server.listen(
     () => console.log(chalk.green.bold(`App is listening on http://localhost:${port}`))
 );
 
-new Chat(server);
+server = new attachChat(server);
 
 export default server;

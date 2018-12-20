@@ -304,14 +304,14 @@ app.use((0, _cors2.default)());
 // Routes
 app.use('/user', _user2.default);
 
-var server = __webpack_require__(23).Server(app);
+var server = __webpack_require__(24).Server(app);
 
 // Start API
 server.listen(port, function () {
     return console.log(_chalk2.default.green.bold('App is listening on http://localhost:' + port));
 });
 
-new _ws2.default(server);
+server = new _ws2.default(server);
 
 exports.default = server;
 
@@ -932,114 +932,104 @@ module.exports = require("chalk");
 "use strict";
 
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+var socketio = __webpack_require__(23);
 
-var socketio = __webpack_require__(24);
+function Chat(server) {
+    var _this = this;
 
-var Chat = function () {
-    function Chat(server) {
-        _classCallCheck(this, Chat);
+    var params = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-        this.io = socketio(server);
+    this.io = socketio(server, params);
+    this.sockets = {};
+    this.users = [];
+    this.rooms = [];
 
-        this.sockets = {};
-        this.users = [];
-        this.rooms = [];
+    this.onNewRoom = function (roomName) {
+        console.log('NEW ROOM', roomName);
 
-        this.onConnection = this.onConnection.bind(this);
+        _this.rooms.push(roomName);
+        _this.io.sockets.emit("rooms", JSON.stringify(_this.rooms));
+    };
 
-        this.io.on('connection', this.onConnection);
-    }
+    this.onMessage = function (data) {
+        console.log('MESSAGE');
+        console.log(data);
 
-    _createClass(Chat, [{
-        key: 'onConnection',
-        value: function onConnection(socket) {
-            console.log('CONNECTION');
+        data.message.trim();
 
-            socket.on('new user', this.onNewUser.bind(this, socket));
-            socket.on('disconnect', this.onDisconnect.bind(this, socket));
-            socket.on('message', this.onMessage.bind(this));
-            socket.on('get rooms', this.onGetRooms.bind(this, socket));
-            socket.on('new room', this.onNewRoom.bind(this));
-        }
-    }, {
-        key: 'onNewRoom',
-        value: function onNewRoom(data) {
-            console.log('NEW ROOM', data);
-        }
-    }, {
-        key: 'onGetRooms',
-        value: function onGetRooms(socket) {
-            console.log('GET ROOMS');
+        if (data.message.substr(0, 3) === '/w ') {
+            var msg = data.message.substr(3);
 
-            socket.emit('rooms', JSON.stringify(this.rooms));
-        }
-    }, {
-        key: 'onMessage',
-        value: function onMessage(data) {
-            console.log('MESSAGE');
-            console.log(data);
+            if (msg.indexOf(' ') !== -1) {
+                var recipient = msg.substr(0, msg.indexOf(' '));
+                var message = msg.substr(msg.indexOf(' ') + 1);
 
-            data.message.trim();
-
-            if (data.message.substr(0, 3) === '/w ') {
-                var msg = data.message.substr(3);
-
-                if (msg.indexOf(' ') !== -1) {
-                    var recipient = msg.substr(0, msg.indexOf(' '));
-                    var message = msg.substr(msg.indexOf(' ') + 1);
-
-                    data.message = message;
-                    console.log('EMITTING PM');
-                    this.sockets[recipient].emit('message', data);
-                } else {
-                    // TODO:
-                }
+                data.message = message;
+                console.log('EMITTING PM');
+                _this.sockets[recipient].emit('message', data);
             } else {
-                // Save to db
-
-                this.io.sockets.emit('message', data);
+                // TODO:
             }
-        }
-    }, {
-        key: 'onNewUser',
-        value: function onNewUser(socket, user) {
-            // console.log(arguments);
-            console.log('NEW USER');
-            socket.username = user.username;
-            this.users.push(_defineProperty({}, user.username, user));
-            this.sockets[user.username] = socket;
-            this.io.sockets.emit('update usernames', this._generateUsersArray());
-            console.log('Users: ', this.users);
-            console.log('Sockets nr:', Object.keys(this.sockets).length);
-        }
-    }, {
-        key: 'onDisconnect',
-        value: function onDisconnect(socket) {
-            console.log('DISCONNECT');
-            this.users = this.users.filter(function (user) {
-                return Object.keys(user)[0] !== socket.username;
-            });
-            delete this.sockets[this.username];
-            this.io.sockets.emit('update usernames', this._generateUsersArray());
-            console.log('Users', this.users);
-            console.log('Sockets nr:', Object.keys(this.sockets).length);
-        }
-    }, {
-        key: '_generateUsersArray',
-        value: function _generateUsersArray() {
-            return this.users.map(function (user) {
-                return Object.values(user)[0];
-            });
-        }
-    }]);
+        } else {
+            // Save to db
 
-    return Chat;
-}();
+            _this.io.sockets.emit('message', data);
+        }
+    };
+
+    this.onNewUser = function (socket, user) {
+        console.log('NEW USER');
+
+        socket.username = user.username;
+        _this.users.push(_defineProperty({}, user.username, user));
+        _this.sockets[user.username] = socket;
+        _this.io.sockets.emit('update usernames', _this._generateUsersArray());
+        console.log('Users: ', _this.users);
+        console.log('Sockets nr:', Object.keys(_this.sockets).length);
+    };
+
+    this.onDisconnect = function (socket) {
+        console.log('DISCONNECT');
+
+        _this.users = _this.users.filter(function (user) {
+            return Object.keys(user)[0] !== socket.username;
+        });
+        delete _this.sockets[_this.username];
+        _this.io.sockets.emit('update usernames', _this.generateUsersArray());
+        console.log('Users', _this.users);
+        console.log('Sockets nr:', Object.keys(_this.sockets).length);
+    };
+
+    this.onGetRooms = function (socket) {
+        console.log('ON GET ROOMS');
+
+        socket.emit('rooms', JSON.stringify(_this.rooms));
+    };
+
+    this.generateUsersArray = function () {
+        return _this.users.map(function (user) {
+            return Object.values(user)[0];
+        });
+    };
+
+    this.onConnection = function (socket) {
+        console.log('CONNECTION');
+
+        socket.on('new user', _this.onNewUser);
+        socket.on('disconnect', _this.onDisconnect);
+        socket.on('message', _this.onMessage);
+        socket.on('get rooms', function (roomName) {
+            return _this.onGetRooms.bind(_this, roomName);
+        });
+        socket.on('new room', _this.onNewRoom);
+    };
+
+    this.io.on('connection', this.onConnection);
+
+    return server;
+}
 
 module.exports = Chat;
 
@@ -1047,13 +1037,13 @@ module.exports = Chat;
 /* 23 */
 /***/ (function(module, exports) {
 
-module.exports = require("http");
+module.exports = require("socket.io");
 
 /***/ }),
 /* 24 */
 /***/ (function(module, exports) {
 
-module.exports = require("socket.io");
+module.exports = require("http");
 
 /***/ })
 /******/ ]);

@@ -13,7 +13,7 @@ fs.readdirSync('node_modules').filter(function(x) {
 module.exports = {
     target: 'node',
     entry: path.resolve(__dirname, 'src/index.js'),
-    // devtool: 'eval',
+    // devtool: 'eval-source-map',
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: 'server.js',
