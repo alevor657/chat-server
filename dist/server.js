@@ -937,7 +937,15 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 var socketio = __webpack_require__(23);
 
 // Constants. Move to a different file
+var REQUEST_ROOM_NAMES = "GET_ROOMS";
+var NEW_ROOM = "NEW_ROOM";
+var DELETE_ROOM = "DELETE_ROOM";
 var ERR_ROOM_EXISTS = "ERR_ROOM_EXISTS";
+var REPOPULATE_ROOMS = "REPOPULATE_ROOMS";
+var JOIN_ROOM = "JOIN_ROOM";
+var LEAVE_ROOM = "LEAVE_ROOM";
+var MESSAGE_INCOMING = 'MESSAGE_SEND';
+var MESSAGE_OUTGOING = 'NEW_MESSAGE';
 
 function Chat(server) {
     var _this = this;
@@ -959,43 +967,53 @@ function Chat(server) {
         }
 
         _this.rooms.push(roomName);
-        _this.io.sockets.emit("rooms", JSON.stringify(_this.rooms));
+        _this.io.sockets.emit(REPOPULATE_ROOMS, JSON.stringify(_this.rooms));
     };
 
     this.onDeleteRoom = function (roomName, socket) {
-        console.log('DELETE ROOM', roomName);
+        console.log(DELETE_ROOM, roomName);
 
         _this.rooms = _this.rooms.filter(function (item) {
             return item !== roomName;
         });
 
-        socket.emit('rooms', JSON.stringify(_this.rooms));
+        socket.emit(REPOPULATE_ROOMS, JSON.stringify(_this.rooms));
     };
 
-    this.onMessage = function (data) {
-        console.log('MESSAGE');
-        console.log(data);
+    // this.onMessage = (data) => {
+    //     console.log('MESSAGE');
+    //     console.log(data);
 
-        data.message.trim();
+    //     data.message.trim();
 
-        if (data.message.substr(0, 3) === '/w ') {
-            var msg = data.message.substr(3);
+    //     if (data.message.substr(0, 3) === '/w ') {
+    //         let msg = data.message.substr(3);
 
-            if (msg.indexOf(' ') !== -1) {
-                var recipient = msg.substr(0, msg.indexOf(' '));
-                var message = msg.substr(msg.indexOf(' ') + 1);
+    //         if (msg.indexOf(' ') !== -1) {
+    //             let recipient = msg.substr(0, msg.indexOf(' '));
+    //             let message = msg.substr(msg.indexOf(' ') + 1);
 
-                data.message = message;
-                console.log('EMITTING PM');
-                _this.sockets[recipient].emit('message', data);
-            } else {
-                // TODO:
-            }
-        } else {
-            // Save to db
+    //             data.message = message;
+    //             console.log('EMITTING PM');
+    //             this.sockets[recipient].emit('message', data);
+    //         } else {
+    //             // TODO:
+    //         }
+    //     } else {
+    //         // Save to db
 
-            _this.io.sockets.emit('message', data);
-        }
+    //         this.io.sockets.emit('message', data);
+    //     }
+    // };
+
+    this.onMessage = function (message) {
+        console.log('ON MESSAGE', message);
+        var parsedMsg = JSON.parse(message);
+        var room = parsedMsg.room;
+
+        delete parsedMsg.room;
+
+        _this.io.to(room).emit(MESSAGE_OUTGOING, JSON.stringify(parsedMsg));
     };
 
     this.onNewUser = function (socket, user) {
@@ -1024,7 +1042,19 @@ function Chat(server) {
     this.onGetRooms = function (socket) {
         console.log('ON GET ROOMS', _this.rooms);
 
-        socket.emit('rooms', JSON.stringify(_this.rooms));
+        socket.emit(REPOPULATE_ROOMS, JSON.stringify(_this.rooms));
+    };
+
+    this.onJoinRoom = function (roomName, socket) {
+        console.log('JOINING ROOM');
+
+        socket.join(roomName);
+    };
+
+    this.onLeaveRoom = function (roomName, socket) {
+        console.log('LEAVING ROOM');
+
+        socket.leave(roomName);
     };
 
     this.generateUsersArray = function () {
@@ -1036,18 +1066,25 @@ function Chat(server) {
     this.onConnection = function (socket) {
         console.log('CONNECTION');
 
-        socket.emit('rooms', JSON.stringify(_this.rooms));
+        socket.emit(REPOPULATE_ROOMS, JSON.stringify(_this.rooms));
 
         socket.on('new user', _this.onNewUser);
         socket.on('disconnect', _this.onDisconnect);
-        socket.on('message', _this.onMessage);
-        socket.on('get rooms', _this.onGetRooms.bind(_this, socket));
-        socket.on('delete room', function (roomName) {
+        // socket.on('message', this.onMessage);
+        socket.on(REQUEST_ROOM_NAMES, _this.onGetRooms.bind(_this, socket));
+        socket.on(DELETE_ROOM, function (roomName) {
             return _this.onDeleteRoom.call(_this, roomName, socket);
         });
-        socket.on('new room', function (roomName) {
+        socket.on(NEW_ROOM, function (roomName) {
             return _this.onNewRoom.call(_this, roomName, socket);
         });
+        socket.on(JOIN_ROOM, function (roomName) {
+            return _this.onJoinRoom.call(_this, roomName, socket);
+        });
+        socket.on(LEAVE_ROOM, function (roomName) {
+            return _this.onLeaveRoom.call(_this, roomName, socket);
+        });
+        socket.on(MESSAGE_INCOMING, _this.onMessage);
     };
 
     this.io.on('connection', this.onConnection);
