@@ -934,6 +934,8 @@ module.exports = require("chalk");
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 var socketio = __webpack_require__(23);
 
 // Constants. Move to a different file
@@ -946,6 +948,8 @@ var JOIN_ROOM = "JOIN_ROOM";
 var LEAVE_ROOM = "LEAVE_ROOM";
 var MESSAGE_INCOMING = 'MESSAGE_SEND';
 var MESSAGE_OUTGOING = 'NEW_MESSAGE';
+var REQUEST_MESSAGE_HISTORY = 'REQUEST_MESSAGE_HISTORY';
+var RESPONSE_MESSAGE_HISTORY = 'RESPONSE_MESSAGE_HISTORY';
 
 function Chat(server) {
     var _this = this;
@@ -957,6 +961,8 @@ function Chat(server) {
     this.users = [];
     this.rooms = [];
 
+    this.messageCache = {};
+
     this.onNewRoom = function (roomName, socket) {
         console.log('NEW ROOM', roomName);
 
@@ -967,17 +973,18 @@ function Chat(server) {
         }
 
         _this.rooms.push(roomName);
+        socket.join(roomName);
         _this.io.sockets.emit(REPOPULATE_ROOMS, JSON.stringify(_this.rooms));
     };
 
-    this.onDeleteRoom = function (roomName, socket) {
+    this.onDeleteRoom = function (roomName) {
         console.log(DELETE_ROOM, roomName);
 
         _this.rooms = _this.rooms.filter(function (item) {
             return item !== roomName;
         });
 
-        socket.emit(REPOPULATE_ROOMS, JSON.stringify(_this.rooms));
+        _this.io.emit(REPOPULATE_ROOMS, JSON.stringify(_this.rooms));
     };
 
     // this.onMessage = (data) => {
@@ -1011,9 +1018,19 @@ function Chat(server) {
         var parsedMsg = JSON.parse(message);
         var room = parsedMsg.room;
 
+        _this.messageCache[room] = _this.messageCache[room] ? [].concat(_toConsumableArray(_this.messageCache[room]), [parsedMsg]) : [parsedMsg];
+
+        console.log('MSG CACHE FOR ROOM: ', room, _this.messageCache[room]);
+
         delete parsedMsg.room;
 
         _this.io.to(room).emit(MESSAGE_OUTGOING, JSON.stringify(parsedMsg));
+    };
+
+    this.onRequestMessageHistory = function (room, socket) {
+        console.log('ON REQUEST MESSAGE HISTORY FOR', room);
+
+        socket.emit(RESPONSE_MESSAGE_HISTORY, JSON.stringify(_this.messageCache[room] || []));
     };
 
     this.onNewUser = function (socket, user) {
@@ -1084,7 +1101,12 @@ function Chat(server) {
         socket.on(LEAVE_ROOM, function (roomName) {
             return _this.onLeaveRoom.call(_this, roomName, socket);
         });
-        socket.on(MESSAGE_INCOMING, _this.onMessage);
+        socket.on(MESSAGE_INCOMING, function (message) {
+            return _this.onMessage.call(_this, message);
+        });
+        socket.on(REQUEST_MESSAGE_HISTORY, function (room) {
+            return _this.onRequestMessageHistory.call(_this, room, socket);
+        });
     };
 
     this.io.on('connection', this.onConnection);

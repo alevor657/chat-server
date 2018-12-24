@@ -10,13 +10,16 @@ const JOIN_ROOM = "JOIN_ROOM";
 const LEAVE_ROOM = "LEAVE_ROOM";
 const MESSAGE_INCOMING = 'MESSAGE_SEND';
 const MESSAGE_OUTGOING = 'NEW_MESSAGE';
-
+const REQUEST_MESSAGE_HISTORY = 'REQUEST_MESSAGE_HISTORY';
+const RESPONSE_MESSAGE_HISTORY = 'RESPONSE_MESSAGE_HISTORY';
 
 function Chat(server, params = {}) {
     this.io = socketio(server, params);
     this.sockets = {};
     this.users = [];
     this.rooms = [];
+
+    this.messageCache = {};
 
     this.onNewRoom = (roomName, socket) => {
         console.log('NEW ROOM', roomName);
@@ -28,17 +31,18 @@ function Chat(server, params = {}) {
         }
 
         this.rooms.push(roomName);
+        socket.join(roomName);
         this.io.sockets.emit(REPOPULATE_ROOMS, JSON.stringify(this.rooms));
     };
 
-    this.onDeleteRoom = (roomName, socket) => {
+    this.onDeleteRoom = (roomName) => {
         console.log(DELETE_ROOM, roomName);
 
         this.rooms = this.rooms.filter((item) => {
             return item !== roomName;
         });
 
-        socket.emit(REPOPULATE_ROOMS, JSON.stringify(this.rooms));
+        this.io.emit(REPOPULATE_ROOMS, JSON.stringify(this.rooms));
     };
 
     // this.onMessage = (data) => {
@@ -72,9 +76,19 @@ function Chat(server, params = {}) {
         let parsedMsg = JSON.parse(message);
         let room = parsedMsg.room;
 
+        this.messageCache[room] = this.messageCache[room] ? [...this.messageCache[room], parsedMsg] : [parsedMsg];
+
+        console.log('MSG CACHE FOR ROOM: ', room, this.messageCache[room]);
+
         delete parsedMsg.room;
 
         this.io.to(room).emit(MESSAGE_OUTGOING, JSON.stringify(parsedMsg));
+    };
+
+    this.onRequestMessageHistory = (room, socket) => {
+        console.log('ON REQUEST MESSAGE HISTORY FOR', room);
+
+        socket.emit(RESPONSE_MESSAGE_HISTORY, JSON.stringify(this.messageCache[room] || []));
     };
 
     this.onNewUser = (socket, user) => {
@@ -135,7 +149,8 @@ function Chat(server, params = {}) {
         socket.on(NEW_ROOM, roomName => this.onNewRoom.call(this, roomName, socket));
         socket.on(JOIN_ROOM, roomName => this.onJoinRoom.call(this, roomName, socket));
         socket.on(LEAVE_ROOM, roomName => this.onLeaveRoom.call(this, roomName, socket));
-        socket.on(MESSAGE_INCOMING, this.onMessage);
+        socket.on(MESSAGE_INCOMING, message => this.onMessage.call(this, message));
+        socket.on(REQUEST_MESSAGE_HISTORY, room  => this.onRequestMessageHistory.call(this, room, socket));
     };
 
     this.io.on('connection', this.onConnection);
