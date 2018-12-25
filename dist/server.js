@@ -932,8 +932,6 @@ module.exports = require("chalk");
 "use strict";
 
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 var socketio = __webpack_require__(23);
@@ -950,6 +948,8 @@ var MESSAGE_INCOMING = 'MESSAGE_SEND';
 var MESSAGE_OUTGOING = 'NEW_MESSAGE';
 var REQUEST_MESSAGE_HISTORY = 'REQUEST_MESSAGE_HISTORY';
 var RESPONSE_MESSAGE_HISTORY = 'RESPONSE_MESSAGE_HISTORY';
+var NEW_USER = 'NEW_USER';
+var USER_LEAVE = 'USER_LEAVE';
 
 function Chat(server) {
     var _this = this;
@@ -958,7 +958,6 @@ function Chat(server) {
 
     this.io = socketio(server, params);
     this.sockets = {};
-    this.users = [];
     this.rooms = [];
 
     this.messageCache = {};
@@ -993,19 +992,6 @@ function Chat(server) {
 
     //     data.message.trim();
 
-    //     if (data.message.substr(0, 3) === '/w ') {
-    //         let msg = data.message.substr(3);
-
-    //         if (msg.indexOf(' ') !== -1) {
-    //             let recipient = msg.substr(0, msg.indexOf(' '));
-    //             let message = msg.substr(msg.indexOf(' ') + 1);
-
-    //             data.message = message;
-    //             console.log('EMITTING PM');
-    //             this.sockets[recipient].emit('message', data);
-    //         } else {
-    //             // TODO:
-    //         }
     //     } else {
     //         // Save to db
 
@@ -1018,13 +1004,30 @@ function Chat(server) {
         var parsedMsg = JSON.parse(message);
         var room = parsedMsg.room;
 
-        _this.messageCache[room] = _this.messageCache[room] ? [].concat(_toConsumableArray(_this.messageCache[room]), [parsedMsg]) : [parsedMsg];
+        if (parsedMsg.message.substr(0, 3) === '/w ') {
+            var msg = parsedMsg.message.substr(3);
 
-        console.log('MSG CACHE FOR ROOM: ', room, _this.messageCache[room]);
+            if (msg.indexOf(' ') !== -1) {
+                var recipient = msg.substr(0, msg.indexOf(' '));
+                var _message = msg.substr(msg.indexOf(' ') + 1);
 
-        delete parsedMsg.room;
+                parsedMsg.message = _message;
+                console.log('EMITTING PM TO', recipient);
+                if (_this.sockets[recipient]) {
+                    _this.sockets[recipient].emit(MESSAGE_OUTGOING, JSON.stringify(parsedMsg));
+                }
+            } else {
+                // TODO:
+            }
+        } else {
+            _this.messageCache[room] = _this.messageCache[room] ? [].concat(_toConsumableArray(_this.messageCache[room]), [parsedMsg]) : [parsedMsg];
 
-        _this.io.to(room).emit(MESSAGE_OUTGOING, JSON.stringify(parsedMsg));
+            console.log('MSG CACHE FOR ROOM: ', room, _this.messageCache[room]);
+
+            delete parsedMsg.room;
+
+            _this.io.to(room).emit(MESSAGE_OUTGOING, JSON.stringify(parsedMsg));
+        }
     };
 
     this.onRequestMessageHistory = function (room, socket) {
@@ -1033,27 +1036,28 @@ function Chat(server) {
         socket.emit(RESPONSE_MESSAGE_HISTORY, JSON.stringify(_this.messageCache[room] || []));
     };
 
-    this.onNewUser = function (socket, user) {
-        console.log('NEW USER');
+    this.onNewUser = function (user, socket) {
+        console.log('NEW USER', user);
 
-        socket.username = user.username;
-        _this.users.push(_defineProperty({}, user.username, user));
-        _this.sockets[user.username] = socket;
-        _this.io.sockets.emit('update usernames', _this._generateUsersArray());
-        console.log('Users: ', _this.users);
-        console.log('Sockets nr:', Object.keys(_this.sockets).length);
+        _this.sockets[user] = socket;
+    };
+
+    this.onUserLeave = function (user) {
+        console.log('USER LEFT', user);
+
+        delete _this.sockets[user];
     };
 
     this.onDisconnect = function (socket) {
         console.log('DISCONNECT');
 
-        _this.users = _this.users.filter(function (user) {
-            return Object.keys(user)[0] !== socket.username;
-        });
-        delete _this.sockets[_this.username];
-        _this.io.sockets.emit('update usernames', _this.generateUsersArray());
-        console.log('Users', _this.users);
-        console.log('Sockets nr:', Object.keys(_this.sockets).length);
+        // this.users = this.users.filter(user => {
+        //     return Object.keys(user)[0] !== socket.username;
+        // });
+        // delete this.sockets[this.username];
+        // this.io.sockets.emit('update usernames', this.generateUsersArray());
+        // console.log('Users', this.users);
+        // console.log('Sockets nr:', Object.keys(this.sockets).length);
     };
 
     this.onGetRooms = function (socket) {
@@ -1074,11 +1078,9 @@ function Chat(server) {
         socket.leave(roomName);
     };
 
-    this.generateUsersArray = function () {
-        return _this.users.map(function (user) {
-            return Object.values(user)[0];
-        });
-    };
+    // this.generateUsersArray = () => {
+    //     return this.users.map(user => Object.values(user)[0]);
+    // };
 
     this.onConnection = function (socket) {
         console.log('CONNECTION');
@@ -1106,6 +1108,12 @@ function Chat(server) {
         });
         socket.on(REQUEST_MESSAGE_HISTORY, function (room) {
             return _this.onRequestMessageHistory.call(_this, room, socket);
+        });
+        socket.on(NEW_USER, function (username) {
+            return _this.onNewUser.call(_this, username, socket);
+        });
+        socket.on(USER_LEAVE, function (username) {
+            return _this.onUserLeave.call(_this, username);
         });
     };
 

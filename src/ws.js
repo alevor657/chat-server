@@ -12,11 +12,12 @@ const MESSAGE_INCOMING = 'MESSAGE_SEND';
 const MESSAGE_OUTGOING = 'NEW_MESSAGE';
 const REQUEST_MESSAGE_HISTORY = 'REQUEST_MESSAGE_HISTORY';
 const RESPONSE_MESSAGE_HISTORY = 'RESPONSE_MESSAGE_HISTORY';
+const NEW_USER = 'NEW_USER';
+const USER_LEAVE = 'USER_LEAVE';
 
 function Chat(server, params = {}) {
     this.io = socketio(server, params);
     this.sockets = {};
-    this.users = [];
     this.rooms = [];
 
     this.messageCache = {};
@@ -51,19 +52,6 @@ function Chat(server, params = {}) {
 
     //     data.message.trim();
 
-    //     if (data.message.substr(0, 3) === '/w ') {
-    //         let msg = data.message.substr(3);
-
-    //         if (msg.indexOf(' ') !== -1) {
-    //             let recipient = msg.substr(0, msg.indexOf(' '));
-    //             let message = msg.substr(msg.indexOf(' ') + 1);
-
-    //             data.message = message;
-    //             console.log('EMITTING PM');
-    //             this.sockets[recipient].emit('message', data);
-    //         } else {
-    //             // TODO:
-    //         }
     //     } else {
     //         // Save to db
 
@@ -76,13 +64,31 @@ function Chat(server, params = {}) {
         let parsedMsg = JSON.parse(message);
         let room = parsedMsg.room;
 
-        this.messageCache[room] = this.messageCache[room] ? [...this.messageCache[room], parsedMsg] : [parsedMsg];
 
-        console.log('MSG CACHE FOR ROOM: ', room, this.messageCache[room]);
+        if (parsedMsg.message.substr(0, 3) === '/w ') {
+            let msg = parsedMsg.message.substr(3);
 
-        delete parsedMsg.room;
+            if (msg.indexOf(' ') !== -1) {
+                let recipient = msg.substr(0, msg.indexOf(' '));
+                let message = msg.substr(msg.indexOf(' ') + 1);
 
-        this.io.to(room).emit(MESSAGE_OUTGOING, JSON.stringify(parsedMsg));
+                parsedMsg.message = message;
+                console.log('EMITTING PM TO', recipient);
+                if (this.sockets[recipient]) {
+                    this.sockets[recipient].emit(MESSAGE_OUTGOING, JSON.stringify(parsedMsg));
+                }
+            } else {
+                // TODO:
+            }
+        } else {
+            this.messageCache[room] = this.messageCache[room] ? [...this.messageCache[room], parsedMsg] : [parsedMsg];
+
+            console.log('MSG CACHE FOR ROOM: ', room, this.messageCache[room]);
+
+            delete parsedMsg.room;
+
+            this.io.to(room).emit(MESSAGE_OUTGOING, JSON.stringify(parsedMsg));
+        }
     };
 
     this.onRequestMessageHistory = (room, socket) => {
@@ -91,27 +97,28 @@ function Chat(server, params = {}) {
         socket.emit(RESPONSE_MESSAGE_HISTORY, JSON.stringify(this.messageCache[room] || []));
     };
 
-    this.onNewUser = (socket, user) => {
-        console.log('NEW USER');
+    this.onNewUser = (user, socket) => {
+        console.log('NEW USER', user);
 
-        socket.username = user.username;
-        this.users.push({ [user.username]: user });
-        this.sockets[user.username] = socket;
-        this.io.sockets.emit('update usernames', this._generateUsersArray());
-        console.log('Users: ', this.users);
-        console.log('Sockets nr:', Object.keys(this.sockets).length);
+        this.sockets[user] = socket;
+    };
+
+    this.onUserLeave = user => {
+        console.log('USER LEFT', user);
+
+        delete this.sockets[user];
     };
 
     this.onDisconnect = (socket) => {
         console.log('DISCONNECT');
 
-        this.users = this.users.filter(user => {
-            return Object.keys(user)[0] !== socket.username;
-        });
-        delete this.sockets[this.username];
-        this.io.sockets.emit('update usernames', this.generateUsersArray());
-        console.log('Users', this.users);
-        console.log('Sockets nr:', Object.keys(this.sockets).length);
+        // this.users = this.users.filter(user => {
+        //     return Object.keys(user)[0] !== socket.username;
+        // });
+        // delete this.sockets[this.username];
+        // this.io.sockets.emit('update usernames', this.generateUsersArray());
+        // console.log('Users', this.users);
+        // console.log('Sockets nr:', Object.keys(this.sockets).length);
     };
 
     this.onGetRooms = socket => {
@@ -132,9 +139,9 @@ function Chat(server, params = {}) {
         socket.leave(roomName);
     };
 
-    this.generateUsersArray = () => {
-        return this.users.map(user => Object.values(user)[0]);
-    };
+    // this.generateUsersArray = () => {
+    //     return this.users.map(user => Object.values(user)[0]);
+    // };
 
     this.onConnection = socket => {
         console.log('CONNECTION');
@@ -151,6 +158,8 @@ function Chat(server, params = {}) {
         socket.on(LEAVE_ROOM, roomName => this.onLeaveRoom.call(this, roomName, socket));
         socket.on(MESSAGE_INCOMING, message => this.onMessage.call(this, message));
         socket.on(REQUEST_MESSAGE_HISTORY, room  => this.onRequestMessageHistory.call(this, room, socket));
+        socket.on(NEW_USER, username => this.onNewUser.call(this, username, socket));
+        socket.on(USER_LEAVE, username => this.onUserLeave.call(this, username));
     };
 
     this.io.on('connection', this.onConnection);
