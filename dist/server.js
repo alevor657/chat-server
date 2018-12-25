@@ -1024,8 +1024,6 @@ function Chat(server) {
 
             console.log('MSG CACHE FOR ROOM: ', room, _this.messageCache[room]);
 
-            delete parsedMsg.room;
-
             _this.io.to(room).emit(MESSAGE_OUTGOING, JSON.stringify(parsedMsg));
         }
     };
