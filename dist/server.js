@@ -1131,12 +1131,12 @@ function Chat(server) {
     this.onDeleteRoom = function (roomName, socket) {
         console.log("DELETING ROOM", roomName);
 
-        var roomToDelete = _this.rooms.filter(function (room) {
+        var roomToDelete = _this.rooms.find(function (room) {
             return room.roomName === roomName;
         });
 
         if (roomToDelete.owner !== socket.id) {
-            console.log("You are not the ownder of the room!", roomToDelete.socket, socket.id);
+            console.log("You are not the owner of the room!", roomToDelete.socket, socket.id);
             return;
         }
 

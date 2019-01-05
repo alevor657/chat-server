@@ -39,12 +39,12 @@ function Chat(server, params = {}) {
     this.onDeleteRoom = (roomName, socket) => {
         console.log("DELETING ROOM", roomName);
 
-        let roomToDelete = this.rooms.filter(room => {
+        let roomToDelete = this.rooms.find(room => {
             return room.roomName === roomName;
         });
 
         if (roomToDelete.owner !== socket.id) {
-            console.log("You are not the ownder of the room!", roomToDelete.socket, socket.id);
+            console.log("You are not the owner of the room!", roomToDelete.socket, socket.id);
             return;
         }
 
