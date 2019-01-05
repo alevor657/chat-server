@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "/dist";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 4);
+/******/ 	return __webpack_require__(__webpack_require__.s = 7);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -86,6 +86,12 @@ var JWT_SECRET = exports.JWT_SECRET = 'DEUSVULT';
 
 /***/ }),
 /* 1 */
+/***/ (function(module, exports) {
+
+module.exports = require("passport");
+
+/***/ }),
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -95,11 +101,11 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _mongoose = __webpack_require__(2);
+var _mongoose = __webpack_require__(3);
 
 var _mongoose2 = _interopRequireDefault(_mongoose);
 
-var _bcryptjs = __webpack_require__(11);
+var _bcryptjs = __webpack_require__(14);
 
 var _bcryptjs2 = _interopRequireDefault(_bcryptjs);
 
@@ -207,19 +213,159 @@ userSchema.methods.validatePassword = function () {
 exports.default = _mongoose2.default.model('user', userSchema);
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, exports) {
 
 module.exports = require("mongoose");
 
 /***/ }),
-/* 3 */
-/***/ (function(module, exports) {
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
 
-module.exports = require("passport");
+"use strict";
+
+
+var _passport = __webpack_require__(1);
+
+var _passport2 = _interopRequireDefault(_passport);
+
+var _passportJwt = __webpack_require__(17);
+
+var _passportLocal = __webpack_require__(18);
+
+var _constants = __webpack_require__(0);
+
+var _user = __webpack_require__(2);
+
+var _user2 = _interopRequireDefault(_user);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+_passport2.default.use(new _passportJwt.Strategy({
+    jwtFromRequest: _passportJwt.ExtractJwt.fromHeader('authorization'),
+    secretOrKey: _constants.JWT_SECRET
+}, function () {
+    var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(payload, done) {
+        var user;
+        return regeneratorRuntime.wrap(function _callee$(_context) {
+            while (1) {
+                switch (_context.prev = _context.next) {
+                    case 0:
+                        _context.prev = 0;
+                        _context.next = 3;
+                        return _user2.default.findById(payload.sub);
+
+                    case 3:
+                        user = _context.sent;
+
+                        if (user) {
+                            _context.next = 6;
+                            break;
+                        }
+
+                        return _context.abrupt('return', done(null, false));
+
+                    case 6:
+
+                        done(null, user);
+                        _context.next = 12;
+                        break;
+
+                    case 9:
+                        _context.prev = 9;
+                        _context.t0 = _context['catch'](0);
+
+                        done(_context.t0, false);
+
+                    case 12:
+                    case 'end':
+                        return _context.stop();
+                }
+            }
+        }, _callee, undefined, [[0, 9]]);
+    }));
+
+    return function (_x, _x2) {
+        return _ref.apply(this, arguments);
+    };
+}()));
+
+_passport2.default.use(new _passportLocal.Strategy({}, function () {
+    var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(username, password, done) {
+        var user, result;
+        return regeneratorRuntime.wrap(function _callee2$(_context2) {
+            while (1) {
+                switch (_context2.prev = _context2.next) {
+                    case 0:
+                        _context2.prev = 0;
+                        _context2.next = 3;
+                        return _user2.default.findOne({ username: username });
+
+                    case 3:
+                        user = _context2.sent;
+
+                        if (user) {
+                            _context2.next = 6;
+                            break;
+                        }
+
+                        return _context2.abrupt('return', done(null, false));
+
+                    case 6:
+                        _context2.next = 8;
+                        return user.validatePassword(password);
+
+                    case 8:
+                        result = _context2.sent;
+
+                        if (result) {
+                            _context2.next = 11;
+                            break;
+                        }
+
+                        return _context2.abrupt('return', done(null, false));
+
+                    case 11:
+
+                        done(null, user);
+                        _context2.next = 17;
+                        break;
+
+                    case 14:
+                        _context2.prev = 14;
+                        _context2.t0 = _context2['catch'](0);
+
+                        done(_context2.t0, false);
+
+                    case 17:
+                    case 'end':
+                        return _context2.stop();
+                }
+            }
+        }, _callee2, undefined, [[0, 14]]);
+    }));
+
+    return function (_x3, _x4, _x5) {
+        return _ref2.apply(this, arguments);
+    };
+}()));
 
 /***/ }),
-/* 4 */
+/* 5 */
+/***/ (function(module, exports) {
+
+module.exports = require("express-promise-router");
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports) {
+
+module.exports = require("body-parser");
+
+/***/ }),
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -229,39 +375,47 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-__webpack_require__(5);
+__webpack_require__(8);
 
-var _express = __webpack_require__(6);
+var _express = __webpack_require__(9);
 
 var _express2 = _interopRequireDefault(_express);
 
-var _user = __webpack_require__(7);
+var _user = __webpack_require__(10);
 
 var _user2 = _interopRequireDefault(_user);
 
-var _morgan = __webpack_require__(18);
+var _avatar = __webpack_require__(19);
+
+var _avatar2 = _interopRequireDefault(_avatar);
+
+var _morgan = __webpack_require__(23);
 
 var _morgan2 = _interopRequireDefault(_morgan);
 
-var _bodyParser = __webpack_require__(19);
+var _bodyParser = __webpack_require__(6);
 
 var _bodyParser2 = _interopRequireDefault(_bodyParser);
 
-var _mongoose = __webpack_require__(2);
+var _mongoose = __webpack_require__(3);
 
 var _mongoose2 = _interopRequireDefault(_mongoose);
 
-var _cors = __webpack_require__(20);
+var _cors = __webpack_require__(24);
 
 var _cors2 = _interopRequireDefault(_cors);
 
-var _chalk = __webpack_require__(21);
+var _chalk = __webpack_require__(25);
 
 var _chalk2 = _interopRequireDefault(_chalk);
 
-var _ws = __webpack_require__(22);
+var _ws = __webpack_require__(26);
 
 var _ws2 = _interopRequireDefault(_ws);
+
+var _path = __webpack_require__(29);
+
+var _path2 = _interopRequireDefault(_path);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -297,14 +451,18 @@ var port = process.env.DBWEBB_PORT || 1338;
 // Middleware
 app.use((0, _morgan2.default)('dev'));
 app.use(_bodyParser2.default.json());
+app.use('/uploads', _express2.default.static(process.cwd() + '/uploads'));
+
+console.log(_path2.default.join(process.cwd() + '/uploads'));
 
 // Fix cors
 app.use((0, _cors2.default)());
 
 // Routes
 app.use('/user', _user2.default);
+app.use('/avatars', _avatar2.default);
 
-var server = __webpack_require__(24).Server(app);
+var server = __webpack_require__(28).Server(app);
 
 // Start API
 server.listen(port, function () {
@@ -316,19 +474,19 @@ server = new _ws2.default(server);
 exports.default = server;
 
 /***/ }),
-/* 5 */
+/* 8 */
 /***/ (function(module, exports) {
 
 module.exports = require("babel-polyfill");
 
 /***/ }),
-/* 6 */
+/* 9 */
 /***/ (function(module, exports) {
 
 module.exports = require("express");
 
 /***/ }),
-/* 7 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -338,17 +496,17 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _user = __webpack_require__(8);
+var _user = __webpack_require__(11);
 
 var UserController = _interopRequireWildcard(_user);
 
-var _postValidation = __webpack_require__(12);
+var _postValidation = __webpack_require__(15);
 
-var _passport = __webpack_require__(3);
+var _passport = __webpack_require__(1);
 
 var _passport2 = _interopRequireDefault(_passport);
 
-__webpack_require__(14);
+__webpack_require__(4);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -357,7 +515,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 var checkSignIn = _passport2.default.authenticate('local', { session: false });
 var checkJWT = _passport2.default.authenticate('jwt', { session: false });
 
-var router = __webpack_require__(17)();
+var router = __webpack_require__(5)();
 
 router.post('/signup', (0, _postValidation.validateBody)(_postValidation.schemas.signUpSchema), UserController.signUp);
 router.post('/signin', (0, _postValidation.validateBody)(_postValidation.schemas.signInSchema), checkSignIn, UserController.signIn);
@@ -370,7 +528,7 @@ router.get('/profile', checkJWT, UserController.profile);
 exports.default = router;
 
 /***/ }),
-/* 8 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -381,7 +539,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.deleteUsers = exports.profile = exports.signIn = exports.signUp = undefined;
 
-var _User = __webpack_require__(9);
+var _User = __webpack_require__(12);
 
 var _User2 = _interopRequireDefault(_User);
 
@@ -521,7 +679,7 @@ var deleteUsers = exports.deleteUsers = function () {
 }();
 
 /***/ }),
-/* 9 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -533,11 +691,11 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _jsonwebtoken = __webpack_require__(10);
+var _jsonwebtoken = __webpack_require__(13);
 
 var _jsonwebtoken2 = _interopRequireDefault(_jsonwebtoken);
 
-var _user = __webpack_require__(1);
+var _user = __webpack_require__(2);
 
 var _user2 = _interopRequireDefault(_user);
 
@@ -678,19 +836,19 @@ var User = function () {
 exports.default = User;
 
 /***/ }),
-/* 10 */
+/* 13 */
 /***/ (function(module, exports) {
 
 module.exports = require("jsonwebtoken");
 
 /***/ }),
-/* 11 */
+/* 14 */
 /***/ (function(module, exports) {
 
 module.exports = require("bcryptjs");
 
 /***/ }),
-/* 12 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -701,7 +859,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.schemas = exports.validateBody = undefined;
 
-var _joi = __webpack_require__(13);
+var _joi = __webpack_require__(16);
 
 var _joi2 = _interopRequireDefault(_joi);
 
@@ -744,189 +902,181 @@ var schemas = exports.schemas = {
 };
 
 /***/ }),
-/* 13 */
+/* 16 */
 /***/ (function(module, exports) {
 
 module.exports = require("joi");
 
 /***/ }),
-/* 14 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _passport = __webpack_require__(3);
-
-var _passport2 = _interopRequireDefault(_passport);
-
-var _passportJwt = __webpack_require__(15);
-
-var _passportLocal = __webpack_require__(16);
-
-var _constants = __webpack_require__(0);
-
-var _user = __webpack_require__(1);
-
-var _user2 = _interopRequireDefault(_user);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
-
-_passport2.default.use(new _passportJwt.Strategy({
-    jwtFromRequest: _passportJwt.ExtractJwt.fromHeader('authorization'),
-    secretOrKey: _constants.JWT_SECRET
-}, function () {
-    var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(payload, done) {
-        var user;
-        return regeneratorRuntime.wrap(function _callee$(_context) {
-            while (1) {
-                switch (_context.prev = _context.next) {
-                    case 0:
-                        _context.prev = 0;
-                        _context.next = 3;
-                        return _user2.default.findById(payload.sub);
-
-                    case 3:
-                        user = _context.sent;
-
-                        if (user) {
-                            _context.next = 6;
-                            break;
-                        }
-
-                        return _context.abrupt('return', done(null, false));
-
-                    case 6:
-
-                        done(null, user);
-                        _context.next = 12;
-                        break;
-
-                    case 9:
-                        _context.prev = 9;
-                        _context.t0 = _context['catch'](0);
-
-                        done(_context.t0, false);
-
-                    case 12:
-                    case 'end':
-                        return _context.stop();
-                }
-            }
-        }, _callee, undefined, [[0, 9]]);
-    }));
-
-    return function (_x, _x2) {
-        return _ref.apply(this, arguments);
-    };
-}()));
-
-_passport2.default.use(new _passportLocal.Strategy({}, function () {
-    var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(username, password, done) {
-        var user, result;
-        return regeneratorRuntime.wrap(function _callee2$(_context2) {
-            while (1) {
-                switch (_context2.prev = _context2.next) {
-                    case 0:
-                        _context2.prev = 0;
-                        _context2.next = 3;
-                        return _user2.default.findOne({ username: username });
-
-                    case 3:
-                        user = _context2.sent;
-
-                        if (user) {
-                            _context2.next = 6;
-                            break;
-                        }
-
-                        return _context2.abrupt('return', done(null, false));
-
-                    case 6:
-                        _context2.next = 8;
-                        return user.validatePassword(password);
-
-                    case 8:
-                        result = _context2.sent;
-
-                        if (result) {
-                            _context2.next = 11;
-                            break;
-                        }
-
-                        return _context2.abrupt('return', done(null, false));
-
-                    case 11:
-
-                        done(null, user);
-                        _context2.next = 17;
-                        break;
-
-                    case 14:
-                        _context2.prev = 14;
-                        _context2.t0 = _context2['catch'](0);
-
-                        done(_context2.t0, false);
-
-                    case 17:
-                    case 'end':
-                        return _context2.stop();
-                }
-            }
-        }, _callee2, undefined, [[0, 14]]);
-    }));
-
-    return function (_x3, _x4, _x5) {
-        return _ref2.apply(this, arguments);
-    };
-}()));
-
-/***/ }),
-/* 15 */
+/* 17 */
 /***/ (function(module, exports) {
 
 module.exports = require("passport-jwt");
 
 /***/ }),
-/* 16 */
+/* 18 */
 /***/ (function(module, exports) {
 
 module.exports = require("passport-local");
 
 /***/ }),
-/* 17 */
-/***/ (function(module, exports) {
-
-module.exports = require("express-promise-router");
-
-/***/ }),
-/* 18 */
-/***/ (function(module, exports) {
-
-module.exports = require("morgan");
-
-/***/ }),
 /* 19 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-module.exports = require("body-parser");
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _passport = __webpack_require__(1);
+
+var _passport2 = _interopRequireDefault(_passport);
+
+__webpack_require__(4);
+
+var _avatar = __webpack_require__(20);
+
+var _bodyParser = __webpack_require__(6);
+
+var _bodyParser2 = _interopRequireDefault(_bodyParser);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var checkJWT = _passport2.default.authenticate('jwt', { session: false });
+
+var router = __webpack_require__(5)();
+
+router.post('/upload', checkJWT, _bodyParser2.default.raw({ type: 'image/jpeg' }), _avatar.avatarUploader);
+
+exports.default = router;
 
 /***/ }),
 /* 20 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-module.exports = require("cors");
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.avatarUploader = undefined;
+
+var avatarUploader = exports.avatarUploader = function () {
+    var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(req, res) {
+        var cwd, username;
+        return regeneratorRuntime.wrap(function _callee$(_context) {
+            while (1) {
+                switch (_context.prev = _context.next) {
+                    case 0:
+                        cwd = process.cwd();
+
+                        // Create uploads folder if not exists
+
+                        _context.prev = 1;
+                        _context.next = 4;
+                        return access(cwd + '/uploads', R_OK | W_OK);
+
+                    case 4:
+                        _context.next = 11;
+                        break;
+
+                    case 6:
+                        _context.prev = 6;
+                        _context.t0 = _context['catch'](1);
+
+                        if (!(_context.t0.code === 'ENOENT')) {
+                            _context.next = 11;
+                            break;
+                        }
+
+                        _context.next = 11;
+                        return mkdir(cwd + '/uploads');
+
+                    case 11:
+
+                        // Write avatar to disc
+                        username = req.get("Username");
+                        _context.prev = 12;
+                        _context.next = 15;
+                        return writeFile(cwd + '/uploads/' + username + '_avatar.jpeg', req.body);
+
+                    case 15:
+                        _context.next = 21;
+                        break;
+
+                    case 17:
+                        _context.prev = 17;
+                        _context.t1 = _context['catch'](12);
+
+                        res.status(400).send();
+                        return _context.abrupt('return');
+
+                    case 21:
+
+                        // console.log(req);
+                        res.end();
+
+                    case 22:
+                    case 'end':
+                        return _context.stop();
+                }
+            }
+        }, _callee, this, [[1, 6], [12, 17]]);
+    }));
+
+    return function avatarUploader(_x, _x2) {
+        return _ref.apply(this, arguments);
+    };
+}();
+
+var _fs = __webpack_require__(21);
+
+var _util = __webpack_require__(22);
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+var access = (0, _util.promisify)(_fs.access);
+var mkdir = (0, _util.promisify)(_fs.mkdir);
+var writeFile = (0, _util.promisify)(_fs.writeFile);
+
+var R_OK = _fs.constants.R_OK,
+    W_OK = _fs.constants.W_OK;
 
 /***/ }),
 /* 21 */
 /***/ (function(module, exports) {
 
-module.exports = require("chalk");
+module.exports = require("fs");
 
 /***/ }),
 /* 22 */
+/***/ (function(module, exports) {
+
+module.exports = require("util");
+
+/***/ }),
+/* 23 */
+/***/ (function(module, exports) {
+
+module.exports = require("morgan");
+
+/***/ }),
+/* 24 */
+/***/ (function(module, exports) {
+
+module.exports = require("cors");
+
+/***/ }),
+/* 25 */
+/***/ (function(module, exports) {
+
+module.exports = require("chalk");
+
+/***/ }),
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -934,7 +1084,7 @@ module.exports = require("chalk");
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
-var socketio = __webpack_require__(23);
+var socketio = __webpack_require__(27);
 
 // Constants. Move to a different file
 var REQUEST_ROOM_NAMES = "GET_ROOMS";
@@ -986,19 +1136,6 @@ function Chat(server) {
         _this.io.emit(REPOPULATE_ROOMS, JSON.stringify(_this.rooms));
     };
 
-    // this.onMessage = (data) => {
-    //     console.log('MESSAGE');
-    //     console.log(data);
-
-    //     data.message.trim();
-
-    //     } else {
-    //         // Save to db
-
-    //         this.io.sockets.emit('message', data);
-    //     }
-    // };
-
     this.onMessage = function (message) {
         console.log('ON MESSAGE', message);
         var parsedMsg = JSON.parse(message);
@@ -1046,17 +1183,17 @@ function Chat(server) {
         delete _this.sockets[user];
     };
 
-    this.onDisconnect = function (socket) {
-        console.log('DISCONNECT');
+    // this.onDisconnect = (socket) => {
+    //     console.log('DISCONNECT');
 
-        // this.users = this.users.filter(user => {
-        //     return Object.keys(user)[0] !== socket.username;
-        // });
-        // delete this.sockets[this.username];
-        // this.io.sockets.emit('update usernames', this.generateUsersArray());
-        // console.log('Users', this.users);
-        // console.log('Sockets nr:', Object.keys(this.sockets).length);
-    };
+    // this.users = this.users.filter(user => {
+    //     return Object.keys(user)[0] !== socket.username;
+    // });
+    // delete this.sockets[this.username];
+    // this.io.sockets.emit('update usernames', this.generateUsersArray());
+    // console.log('Users', this.users);
+    // console.log('Sockets nr:', Object.keys(this.sockets).length);
+    // };
 
     this.onGetRooms = function (socket) {
         console.log('ON GET ROOMS', _this.rooms);
@@ -1085,9 +1222,8 @@ function Chat(server) {
 
         socket.emit(REPOPULATE_ROOMS, JSON.stringify(_this.rooms));
 
-        socket.on('new user', _this.onNewUser);
-        socket.on('disconnect', _this.onDisconnect);
-        // socket.on('message', this.onMessage);
+        // socket.on('new user', this.onNewUser);
+        // socket.on('disconnect', this.onDisconnect);
         socket.on(REQUEST_ROOM_NAMES, _this.onGetRooms.bind(_this, socket));
         socket.on(DELETE_ROOM, function (roomName) {
             return _this.onDeleteRoom.call(_this, roomName, socket);
@@ -1123,16 +1259,22 @@ function Chat(server) {
 module.exports = Chat;
 
 /***/ }),
-/* 23 */
+/* 27 */
 /***/ (function(module, exports) {
 
 module.exports = require("socket.io");
 
 /***/ }),
-/* 24 */
+/* 28 */
 /***/ (function(module, exports) {
 
 module.exports = require("http");
+
+/***/ }),
+/* 29 */
+/***/ (function(module, exports) {
+
+module.exports = require("path");
 
 /***/ })
 /******/ ]);

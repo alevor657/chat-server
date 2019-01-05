@@ -46,19 +46,6 @@ function Chat(server, params = {}) {
         this.io.emit(REPOPULATE_ROOMS, JSON.stringify(this.rooms));
     };
 
-    // this.onMessage = (data) => {
-    //     console.log('MESSAGE');
-    //     console.log(data);
-
-    //     data.message.trim();
-
-    //     } else {
-    //         // Save to db
-
-    //         this.io.sockets.emit('message', data);
-    //     }
-    // };
-
     this.onMessage = (message) => {
         console.log('ON MESSAGE', message);
         let parsedMsg = JSON.parse(message);
@@ -107,8 +94,8 @@ function Chat(server, params = {}) {
         delete this.sockets[user];
     };
 
-    this.onDisconnect = (socket) => {
-        console.log('DISCONNECT');
+    // this.onDisconnect = (socket) => {
+    //     console.log('DISCONNECT');
 
         // this.users = this.users.filter(user => {
         //     return Object.keys(user)[0] !== socket.username;
@@ -117,7 +104,7 @@ function Chat(server, params = {}) {
         // this.io.sockets.emit('update usernames', this.generateUsersArray());
         // console.log('Users', this.users);
         // console.log('Sockets nr:', Object.keys(this.sockets).length);
-    };
+    // };
 
     this.onGetRooms = socket => {
         console.log('ON GET ROOMS', this.rooms);
@@ -146,9 +133,8 @@ function Chat(server, params = {}) {
 
         socket.emit(REPOPULATE_ROOMS, JSON.stringify(this.rooms));
 
-        socket.on('new user', this.onNewUser);
-        socket.on('disconnect', this.onDisconnect);
-        // socket.on('message', this.onMessage);
+        // socket.on('new user', this.onNewUser);
+        // socket.on('disconnect', this.onDisconnect);
         socket.on(REQUEST_ROOM_NAMES, this.onGetRooms.bind(this, socket));
         socket.on(DELETE_ROOM, roomName => this.onDeleteRoom.call(this, roomName, socket));
         socket.on(NEW_ROOM, roomName => this.onNewRoom.call(this, roomName, socket));

@@ -1,12 +1,14 @@
 import 'babel-polyfill';
 import express from 'express';
-import user from './api/routes/user';
+import userRouter from './api/routes/user';
+import avatarRouter from './api/routes/avatar';
 import morgan from 'morgan';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import chalk from 'chalk';
 import attachChat from './ws';
+import path from 'path';
 
 if (process.env.MONGO_TEST_DB) {
     mongoose.connect('mongodb://tester:tester@80.78.218.120:27017/chatAPI', function (err) {
@@ -36,18 +38,23 @@ db.on('error', console.error.bind(console, 'connection error:'));
 
 const app = express();
 
-
 const port = process.env.DBWEBB_PORT || 1338;
 
 // Middleware
 app.use(morgan('dev'));
 app.use(bodyParser.json());
+app.use('/uploads', express.static(`${process.cwd()}/uploads`));
+
+console.log(path.join(`${process.cwd()}/uploads`));
+
+
 
 // Fix cors
 app.use(cors());
 
 // Routes
-app.use('/user', user);
+app.use('/user', userRouter);
+app.use('/avatars', avatarRouter);
 
 let server = require('http').Server(app);
 
