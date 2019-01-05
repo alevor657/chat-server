@@ -1121,16 +1121,24 @@ function Chat(server) {
             return;
         }
 
-        _this.rooms.push(roomName);
+        _this.rooms.push({ owner: socket.id, roomName: roomName });
         socket.join(roomName);
         _this.io.sockets.emit(REPOPULATE_ROOMS, JSON.stringify(_this.rooms));
     };
 
-    this.onDeleteRoom = function (roomName) {
+    this.onDeleteRoom = function (roomName, socket) {
+        var roomToDelete = _this.rooms.filter(function (room) {
+            return room.roomName === roomName;
+        });
+
+        if (roomToDelete.ownner !== socket.id) {
+            return;
+        }
+
         console.log(DELETE_ROOM, roomName);
 
         _this.rooms = _this.rooms.filter(function (item) {
-            return item !== roomName;
+            return item.roomName !== roomName;
         });
 
         delete _this.messageCache[roomName];

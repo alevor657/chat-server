@@ -31,16 +31,22 @@ function Chat(server, params = {}) {
             return;
         }
 
-        this.rooms.push(roomName);
+        this.rooms.push({ owner: socket.id, roomName });
         socket.join(roomName);
         this.io.sockets.emit(REPOPULATE_ROOMS, JSON.stringify(this.rooms));
     };
 
-    this.onDeleteRoom = (roomName) => {
+    this.onDeleteRoom = (roomName, socket) => {
+        let roomToDelete = this.rooms.filter(room => {
+            return room.roomName === roomName;
+        });
+
+        if (roomToDelete.ownner !== socket.id) { return; }
+
         console.log(DELETE_ROOM, roomName);
 
         this.rooms = this.rooms.filter((item) => {
-            return item !== roomName;
+            return item.roomName !== roomName;
         });
 
         delete this.messageCache[roomName];
