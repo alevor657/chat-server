@@ -1133,6 +1133,8 @@ function Chat(server) {
             return item !== roomName;
         });
 
+        delete _this.messageCache[roomName];
+
         _this.io.emit(REPOPULATE_ROOMS, JSON.stringify(_this.rooms));
     };
 

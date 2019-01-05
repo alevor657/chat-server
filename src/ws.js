@@ -43,6 +43,8 @@ function Chat(server, params = {}) {
             return item !== roomName;
         });
 
+        delete this.messageCache[roomName];
+
         this.io.emit(REPOPULATE_ROOMS, JSON.stringify(this.rooms));
     };
 
