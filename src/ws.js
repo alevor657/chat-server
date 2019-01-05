@@ -25,7 +25,7 @@ function Chat(server, params = {}) {
     this.onNewRoom = (roomName, socket) => {
         console.log('NEW ROOM', roomName);
 
-        if (this.rooms.includes(roomName)) {
+        if (this.rooms.includes({ owner: socket.id, roomName })) {
             console.log('ERR ROOM EXISTS', roomName);
             socket.emit(ERR_ROOM_EXISTS);
             return;
@@ -33,15 +33,20 @@ function Chat(server, params = {}) {
 
         this.rooms.push({ owner: socket.id, roomName });
         socket.join(roomName);
-        this.io.sockets.emit(REPOPULATE_ROOMS, JSON.stringify(this.rooms));
+        this.io.sockets.emit(REPOPULATE_ROOMS, JSON.stringify(this.rooms.map(item => item.roomName)));
     };
 
     this.onDeleteRoom = (roomName, socket) => {
+        console.log("DELETING ROOM", roomName);
+
         let roomToDelete = this.rooms.filter(room => {
             return room.roomName === roomName;
         });
 
-        if (roomToDelete.ownner !== socket.id) { return; }
+        if (roomToDelete.owner !== socket.id) {
+            console.log("You are not the ownder of the room!", roomToDelete.socket, socket.id);
+            return;
+        }
 
         console.log(DELETE_ROOM, roomName);
 
@@ -51,7 +56,7 @@ function Chat(server, params = {}) {
 
         delete this.messageCache[roomName];
 
-        this.io.emit(REPOPULATE_ROOMS, JSON.stringify(this.rooms));
+        this.io.emit(REPOPULATE_ROOMS, JSON.stringify(this.rooms.map(item => item.roomName)));
     };
 
     this.onMessage = (message) => {
@@ -117,7 +122,7 @@ function Chat(server, params = {}) {
     this.onGetRooms = socket => {
         console.log('ON GET ROOMS', this.rooms);
 
-        socket.emit(REPOPULATE_ROOMS, JSON.stringify(this.rooms));
+        socket.emit(REPOPULATE_ROOMS, JSON.stringify(this.rooms.map(item => item.roomName)));
     };
 
     this.onJoinRoom = (roomName, socket) => {
@@ -139,7 +144,7 @@ function Chat(server, params = {}) {
     this.onConnection = socket => {
         console.log('CONNECTION');
 
-        socket.emit(REPOPULATE_ROOMS, JSON.stringify(this.rooms));
+        socket.emit(REPOPULATE_ROOMS, JSON.stringify(this.rooms.map(item => item.roomName)));
 
         // socket.on('new user', this.onNewUser);
         // socket.on('disconnect', this.onDisconnect);
